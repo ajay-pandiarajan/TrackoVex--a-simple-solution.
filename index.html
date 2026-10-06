@@ -211,10 +211,10 @@
 
             <div className="text-center px-4 max-w-xs">
               <h1 className="text-3xl font-extrabold text-white tracking-tight leading-snug">
-                {step === 1 ? "Lose your knack for losing things." : "Easy to manage, easy to replace."}
+                {step === 1 ? "Lose your knack for losing thing." : "23EC553 Mini-Project III."}
               </h1>
               <p className="text-sm text-slate-400 mt-2 font-medium">
-                TrackoVex • A Simple Solution
+                TrackoVex • A Simple Solution.
               </p>
             </div>
           </div>
@@ -573,13 +573,13 @@
                 </div>
                 <h2 className="text-xl font-bold text-white">No TrackoVex AirTag Found</h2>
                 <p className="text-sm text-neutral-400 max-w-xs mt-2 leading-relaxed">
-                  Turn on your ESP32 Bluetooth beacon and tap connect to begin Precision Finding.
+                  Turn on your Bluetooth beacon and tap connect to begin Tracking.
                 </p>
                 <button 
                   onClick={startBLEScan}
                   className="mt-6 px-7 py-3.5 rounded-full bg-white text-black text-sm font-bold shadow-2xl active:scale-95 transition-transform"
                 >
-                  Pair ESP32 (BLE)
+                  Pair TrackoVex
                 </button>
               </div>
             )}
@@ -666,8 +666,8 @@
             <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/70 backdrop-blur-xl animate-fade-in">
               <div className="w-full max-w-sm rounded-[32px] ios-liquid-glass p-7 shadow-2xl space-y-4 border border-white/20">
                 <div className="text-center">
-                  <h3 className="text-xl font-bold text-white">Rename AirTag</h3>
-                  <p className="text-xs text-neutral-400 mt-1">Change your TrackoVex device name</p>
+                  <h3 className="text-xl font-bold text-white">Rename TrackoVex</h3>
+                  <p className="text-xs text-neutral-400 mt-1">Change your TrackoVex name</p>
                 </div>
 
                 <div>
@@ -720,8 +720,8 @@
                     <div className="w-16 h-16 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center mb-3 animate-spin">
                       <Icon name="radio" size={30} />
                     </div>
-                    <p className="text-sm font-bold text-white">Listening for Bluetooth Signals...</p>
-                    <p className="text-xs text-neutral-400 mt-1">Ensure your ESP32 beacon is powered on</p>
+                    <p className="text-sm font-bold text-white">Scanning for Bluetooth Signals...</p>
+                    <p className="text-xs text-neutral-400 mt-1">Ensure your Bluetooth is powered ON</p>
                   </div>
                 )}
 
@@ -734,7 +734,7 @@
                         </div>
                         <div>
                           <div className="text-sm font-bold text-white">{discoveredESP.rawName}</div>
-                          <div className="text-[11px] text-neutral-400 font-mono">ESP32 UWB Transceiver</div>
+                          <div className="text-[11px] text-neutral-400 font-mono">BLE Transceiver</div>
                         </div>
                       </div>
                       <span className="text-xs font-mono font-bold text-emerald-400">{discoveredESP.rssi}</span>
@@ -744,7 +744,7 @@
                       onClick={confirmPairDevice}
                       className="w-full py-4 rounded-2xl bg-white text-black text-xs font-bold shadow-xl active:scale-95 transition-all"
                     >
-                      Connect & Begin Finding
+                      Connect & Begin Tracking
                     </button>
                   </div>
                 )}
