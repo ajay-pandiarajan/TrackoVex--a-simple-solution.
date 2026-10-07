@@ -1,45 +1,56 @@
-# TrackoVex - A Simple Solution
+<div align="center">
 
-> A sleek, modern, and frictionless real-time asset tracking and logistics dashboard.
+# 🚀 TrackoVex
+### *A simple, elegant, and efficient tracking solution.*
 
-## 🚀 Live Overview
-- **Location:** `C:\Users\AJAY\.gemini\antigravity\scratch\trackovex\index.html`
-- **Tech Stack:** React 18, Tailwind CSS, Lucide Icons, Apple SF Pro / Inter typography.
-- **Theme:** High-contrast Dark mode & Light mode, Electric Indigo & Neon Violet accents (`#6366f1`, `#3b82f6`), Slate Gray surfaces.
+[![Live Demo](https://img.shields.io/badge/Demo-Live_App-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)](https://trackovex.netlify.app)
 
-## ✨ Core Features Included
-1. **Dashboard Overview:**
-   - Real-time KPI Metric cards (Active Units, Total Mileage, System Health, Active Alerts).
-   - Animated Sector Radar Matrix & Geolocation Map with interactive asset hover tags.
-   - Priority Fleet Units quick-action panel.
-   - Real-time diagnostic event stream and audit logs table.
+<br/>
 
-2. **Live Tracking & Monitoring View:**
-   - Multi-mode display: Responsive Grid View and Detailed Data Table List View.
-   - Interactive Search by Unit ID, Driver, Hub, or Corridor.
-   - Category filtering (Heavy Freight, Last-Mile Van, Cold Storage, Autonomous Drone).
-   - Status filtering (Active, Warning, Idle, Maintenance).
-   - Dynamic Unit Registration ("Add Unit").
+[![GitHub license](https://img.shields.io/github/license/ajay-pandiarajan/TrackoVex--a-simple-solution?style=flat-square&color=blue)](https://github.com/ajay-pandiarajan/TrackoVex--a-simple-solution/blob/main/LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/ajay-pandiarajan/TrackoVex--a-simple-solution?style=flat-square&color=orange)](https://github.com/ajay-pandiarajan/TrackoVex--a-simple-solution/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/ajay-pandiarajan/TrackoVex--a-simple-solution?style=flat-square&color=yellow)](https://github.com/ajay-pandiarajan/TrackoVex--a-simple-solution/issues)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg?style=flat-square)]()
 
-3. **Interactive Asset Detail Modal & Drawer:**
-   - Full telemetry stats (Speed, Battery, Cargo Temp, ETA).
-   - Multi-waypoint milestone tracking.
-   - Live Diagnostic check indicators (ECU, Pressure Sensors, Cold Storage Compressor).
-   - Remote operational state changer (Active, Warning, Idle, Maintenance) with live toast updates.
+</div>
 
-4. **Analytics & Performance Reports:**
-   - KPI metrics on fuel efficiency, utilization ratio, and Mean Time to Service (MTTS).
-   - SVG-based weekly mileage comparisons (Current week vs. Previous week).
-   - Fleet inventory composition distribution bars.
+---
 
-5. **Settings & Preferences:**
-   - Operator credentials & dispatch contact configuration.
-   - Real-time alert triggers for temperature deviations, geofence breaches, and AI re-routing.
-   - Configurable telemetry polling frequency (1s ultra-realtime, 5s balanced, 30s low-bandwidth).
+## 🌐 Live Preview
 
-## 🛠️ How to View & Run
-Simply double-click or open `index.html` in any modern web browser:
-```powershell
-Start-Process "C:\Users\AJAY\.gemini\antigravity\scratch\trackovex\index.html"
-```
-Or serve via any static server.
+Check out the deployed web app here: **[trackovex.netlify.app](https://trackovex.netlify.app)**
+
+---
+
+## 📖 About
+**TrackoVex** is built to make tracking effortless. Designed with a focus on simplicity, speed, and usability, it offers a clean interface and robust functionality without unnecessary clutter.
+
+---
+
+## ✨ Features
+
+- **⚡ Fast & Responsive:** Optimized frontend for smooth navigation across all devices.
+- **🎨 Modern UI/UX:** Clean, accessible, and user-centric design.
+- **🎯 Effortless Tracking:** Streamlined workflow to manage and monitor seamlessly.
+- **☁️ Cloud Deployed:** Instantly accessible online via Netlify.
+
+---
+
+## 🛠️ Tech Stack
+
+<div align="left">
+  <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" />
+  <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" />
+  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
+  <img src="https://img.shields.io/badge/Netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white" />
+</div>
+
+---
+
+## 🚀 Local Setup & Installation
+
+To run this project locally, follow these steps:
+
+1. **Clone the repository**
+   ```bash
+   git clone [https://github.com/ajay-pandiarajan/TrackoVex--a-simple-solution.git](https://github.com/ajay-pandiarajan/TrackoVex--a-simple-solution.git)
