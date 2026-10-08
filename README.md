@@ -3,7 +3,7 @@
 # 🚀 TrackoVex
 ### *A simple, elegant, and efficient tracking solution.*
 
-[![Live Demo](https://img.shields.io/badge/Demo-Live_App-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)](https://trackovex.netlify.app)
+[![Live Demo](https://img.shields.io/badge/Demo-Live_App-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)](https://trackovex.vercel.app)
 
 <br/>
 
@@ -18,7 +18,7 @@
 
 ## 🌐 Live Preview
 
-Check out the deployed web app here: **[trackovex.netlify.app](https://trackovex.netlify.app)**
+Check out the deployed web app here: **[trackovex.vercel.app](https://trackovex.vercel.app)**
 
 ---
 
