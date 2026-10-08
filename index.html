@@ -188,7 +188,7 @@
     };
 
     // ==========================================
-    // 1. INTRO SPLASH SCREEN (TrackoVex Black Logo)
+    // 1. INTRO SPLASH SCREEN (TrackoVex Logo)
     // ==========================================
     function IntroSplash({ onContinue }) {
       const [step, setStep] = useState(1);
@@ -537,61 +537,63 @@
           )}
 
           {/* ========================================================
-              TOP STATUS BAR & HEADER
-              - Uppercase "FINDING"
-              - Device Title with Rename Pencil
-              - Real-Time Battery Indicator
-              - Upper Space Controls: [View Radar/Arrow] + [+] Plus Button to Add/Switch Multiple TrackoVex
+              TOP STATUS BAR & HEADER WITH BRANDING LOGO IN TOP-LEFT
               ======================================================== */}
           <div className="w-full pt-12 px-6 pb-3 flex items-start justify-between z-20">
-            <div>
-              {/* Finding Label */}
-              <div className="text-[12px] font-bold uppercase tracking-wider text-neutral-400 font-sans">
-                {currentDevice ? (searchState === "searching" ? "FINDING" : "NEARBY") : "TRACKOVEX"}
-              </div>
+            <div className="flex items-center gap-3">
+              {/* Branding Logo in Top-Left Corner */}
+              <img 
+                src="logo_t.jpg" 
+                alt="TrackoVex Logo" 
+                className="h-9 w-auto max-w-[110px] object-contain rounded-md filter brightness-110 drop-shadow-[0_2px_8px_rgba(255,255,255,0.15)]"
+              />
 
-              {/* Title: Device Name (Apple SF Pro Font) */}
-              <div className="flex items-center gap-2 mt-0.5">
-                <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white font-sans truncate max-w-[190px] sm:max-w-xs">
-                  {currentDevice ? currentDevice.name : "No Device Paired"}
-                </h1>
+              <div className="flex flex-col">
+                {/* Finding Label */}
+                <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 font-sans">
+                  {currentDevice ? (searchState === "searching" ? "FINDING" : "NEARBY") : "TRACKOVEX"}
+                </div>
+
+                {/* Title: Device Name */}
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white font-sans truncate max-w-[150px] sm:max-w-xs">
+                    {currentDevice ? currentDevice.name : "No Device Paired"}
+                  </h1>
+                  {currentDevice && (
+                    <button 
+                      onClick={() => openRename(currentDevice)}
+                      className="p-1 rounded-full text-neutral-400 hover:text-white transition-colors"
+                      title="Rename"
+                    >
+                      <Icon name="edit-2" size={14} />
+                    </button>
+                  )}
+                </div>
+
+                {/* Real-time Battery Indicator */}
                 {currentDevice && (
-                  <button 
-                    onClick={() => openRename(currentDevice)}
-                    className="p-1 rounded-full text-neutral-400 hover:text-white transition-colors"
-                    title="Rename"
-                  >
-                    <Icon name="edit-2" size={15} />
-                  </button>
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <div className="relative flex items-center">
+                      <div className="w-5 h-2.5 rounded-[3px] border border-white/60 p-[1px] flex items-center">
+                        <div 
+                          className={`h-full rounded-[1px] transition-all duration-500 ${
+                            currentDevice.battery > 20 ? 'bg-[#30d158]' : 'bg-[#ff453a]'
+                          }`}
+                          style={{ width: `${currentDevice.battery}%` }}
+                        ></div>
+                      </div>
+                      <div className="w-[2px] h-[4px] bg-white/60 rounded-r-[1px] ml-[1px]"></div>
+                    </div>
+                    <span className="text-[10px] font-semibold text-neutral-300 font-mono tracking-tight">
+                      {currentDevice.battery}%
+                    </span>
+                    <span className="text-[9px] text-neutral-500 ml-1">• ESP32 BLE</span>
+                  </div>
                 )}
               </div>
-
-              {/* Real-time Battery Indicator (Apple iOS Style) */}
-              {currentDevice && (
-                <div className="flex items-center gap-1.5 mt-1.5">
-                  <div className="relative flex items-center">
-                    <div className="w-6 h-3 rounded-[4px] border border-white/60 p-[1.5px] flex items-center">
-                      <div 
-                        className={`h-full rounded-[2px] transition-all duration-500 ${
-                          currentDevice.battery > 20 ? 'bg-[#30d158]' : 'bg-[#ff453a]'
-                        }`}
-                        style={{ width: `${currentDevice.battery}%` }}
-                      ></div>
-                    </div>
-                    <div className="w-[2px] h-[5px] bg-white/60 rounded-r-[1px] ml-[1px]"></div>
-                  </div>
-                  <span className="text-[11px] font-semibold text-neutral-300 font-mono tracking-tight">
-                    {currentDevice.battery}%
-                  </span>
-                  <span className="text-[10px] text-neutral-500 ml-1">• ESP32 BLE</span>
-                </div>
-              )}
             </div>
 
-            {/* UPPER SPACE ACTION CONTROLS:
-                1. "View Radar" / "View Arrow" Toggle Button
-                2. [+] Plus Key Button (Near View Radar) to add/access 2+ TrackoVex simultaneously
-            */}
+            {/* UPPER SPACE ACTION CONTROLS */}
             <div className="flex items-center gap-2 pt-1">
               {currentDevice && (
                 <button 
@@ -603,7 +605,7 @@
                 </button>
               )}
 
-              {/* [+] Plus Key at Upper Space near View Radar */}
+              {/* [+] Plus Button */}
               <button 
                 onClick={startBLEScan}
                 className="w-10 h-10 rounded-full ios-liquid-btn flex items-center justify-center text-white hover:text-blue-400 shadow-lg active:scale-90"
@@ -612,7 +614,7 @@
                 <Icon name="plus" size={20} className="stroke-[2.5]" />
               </button>
 
-              {/* Multi-Device Pill Selector (shown if 2+ devices paired) */}
+              {/* Multi-Device Pill Selector */}
               {devices.length > 1 && (
                 <button 
                   onClick={() => setShowDeviceDrawer(true)}
@@ -666,11 +668,7 @@
           </div>
 
           {/* ========================================================
-              BOTTOM SECTION (MATCHING ORIGINAL AIRTAG INTERFACE LAYOUT)
-              - Estimated Distance Readout at Bottom Left ("7 ft" / "11 ft" "to your right")
-              - Pre-Installed Circular Buttons:
-                * Left: Close (X) button
-                * Right: ALERT BUZZER BUTTON (Pre-installed Speaker Button with Liquid Glass and Sounding state)
+              BOTTOM SECTION
               ======================================================== */}
           {currentDevice && (
             <div className="w-full px-8 pb-12 pt-2 z-20 flex flex-col justify-end">
@@ -705,9 +703,7 @@
                   <Icon name="x" size={26} className="stroke-[2.5]" />
                 </button>
 
-                {/* Right: PRE-INSTALLED CIRCULAR BUTTON WITH ALERT BUZZER INTEGRATION
-                    Liquid Glass styling matching the UI + Active Buzzer sound feedback
-                */}
+                {/* Right: ALERT BUZZER BUTTON */}
                 <button 
                   onClick={handleTriggerBottomBuzzer}
                   className={`w-16 h-16 rounded-full ios-circle-btn flex items-center justify-center transition-all ${
