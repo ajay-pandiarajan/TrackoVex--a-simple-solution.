@@ -16,7 +16,7 @@
           },
           colors: {
             ios: {
-              bg: '#000000',
+              bg: '#00FF00',
               glass: 'rgba(255, 255, 255, 0.12)',
               glassBorder: 'rgba(255, 255, 255, 0.22)',
               arrow: '#ffffff',
@@ -58,12 +58,10 @@
 
   <!-- Web Audio ESP32 Buzzer Sound Synthesizer -->
   <script>
-    // ESP32 Active Buzzer Alarm Pattern (Loud Harmonic Piezo Ring)
     window.triggerESP32BuzzerAlarm = function() {
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const now = audioCtx.currentTime;
-        // 4 rapid sharp pulses typical of hardware ESP32 piezo active buzzers (2730Hz)
         [0.0, 0.16, 0.32, 0.48].forEach(offset => {
           const osc = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
@@ -84,14 +82,13 @@
   </script>
 
   <style>
-    /* Fullscreen iOS Native App Style */
     html, body {
       width: 100%;
       height: 100%;
       margin: 0;
       padding: 0;
       overflow: hidden;
-      background-color: #000000;
+      background-color: #00FF00;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
@@ -108,14 +105,13 @@
       overflow: hidden;
     }
 
-    /* Heavy Liquid Glassmorphism for iOS UI */
     .ios-liquid-glass {
       background: rgba(255, 255, 255, 0.12);
       backdrop-filter: blur(40px) saturate(220%);
       -webkit-backdrop-filter: blur(40px) saturate(220%);
       border: 1.5px solid rgba(255, 255, 255, 0.24);
       box-shadow: 
-        0 20px 50px rgba(0, 0, 0, 0.6),
+        0 20px 50px rgba(0, 0, 0, 0.1),
         inset 0 1px 2px rgba(255, 255, 255, 0.45);
     }
 
@@ -125,32 +121,32 @@
       -webkit-backdrop-filter: blur(28px) saturate(200%);
       border: 1.5px solid rgba(255, 255, 255, 0.25);
       box-shadow: 
-        0 8px 24px rgba(0, 0, 0, 0.35),
+        0 8px 24px rgba(0, 0, 0, 0.1),
         inset 0 1px 2px rgba(255, 255, 255, 0.4);
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
+    
     .ios-liquid-btn:active {
       transform: scale(0.94);
       background: rgba(255, 255, 255, 0.26);
     }
 
-    /* Bottom Pre-Installed Circular Buttons with Heavy Liquid Glass */
     .ios-circle-btn {
       background: rgba(255, 255, 255, 0.16);
       backdrop-filter: blur(30px) saturate(210%);
       -webkit-backdrop-filter: blur(30px) saturate(210%);
       border: 1.5px solid rgba(255, 255, 255, 0.26);
       box-shadow: 
-        0 10px 30px rgba(0, 0, 0, 0.5),
+        0 10px 30px rgba(0, 0, 0, 0.1),
         inset 0 1px 2px rgba(255, 255, 255, 0.5);
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
+    
     .ios-circle-btn:active {
       transform: scale(0.91);
       background: rgba(255, 255, 255, 0.28);
     }
 
-    /* Active Buzzer State for the Bottom Speaker Button */
     .ios-circle-btn-buzzer-active {
       background: rgba(255, 69, 58, 0.35) !important;
       border: 2px solid #ff453a !important;
@@ -159,13 +155,31 @@
         inset 0 1px 3px rgba(255, 255, 255, 0.8) !important;
     }
 
-    /* 3D Apple AirTag Metallic Token */
     .airtag-disc-3d {
       background: radial-gradient(circle at 35% 35%, #ffffff 0%, #eef2f6 45%, #94a3b8 95%);
       box-shadow: 
-        0 30px 60px -12px rgba(0, 0, 0, 0.6),
+        0 30px 60px -12px rgba(0, 0, 0, 0.2),
         inset 0 4px 7px rgba(255, 255, 255, 0.95),
         inset 0 -5px 7px rgba(0, 0, 0, 0.35);
+    }
+
+    /* Screen Touch Ripple Animation Styles */
+    @keyframes rippleEffect {
+      0% { transform: scale(0); opacity: 0.8; }
+      100% { transform: scale(4); opacity: 0; }
+    }
+    
+    .touch-ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.6);
+      width: 60px;
+      height: 60px;
+      margin-top: -30px;
+      margin-left: -30px;
+      animation: rippleEffect 0.6s ease-out forwards;
+      pointer-events: none;
+      z-index: 9999;
     }
   </style>
 </head>
@@ -175,7 +189,6 @@
   <script type="text/babel">
     const { useState, useEffect, useRef, useMemo } = React;
 
-    // --- Lucide Icon Helper ---
     const Icon = ({ name, size = 20, className = "" }) => {
       const iconRef = useRef(null);
       useEffect(() => {
@@ -187,9 +200,6 @@
       return <span ref={iconRef} className={`inline-flex items-center justify-center align-middle ${className}`} style={{ width: size, height: size }}></span>;
     };
 
-    // ==========================================
-    // 1. INTRO SPLASH SCREEN (TrackoVex Logo)
-    // ==========================================
     function IntroSplash({ onContinue }) {
       const [step, setStep] = useState(1);
       const [animatingOut, setAnimatingOut] = useState(false);
@@ -206,7 +216,7 @@
       };
 
       return (
-        <div className={`fixed inset-0 z-50 bg-black flex flex-col justify-between px-8 py-14 transition-all duration-700 select-none ${
+        <div className={`fixed inset-0 z-50 bg-[#00FF00] flex flex-col justify-between px-8 py-14 transition-all duration-700 select-none ${
           animatingOut ? 'opacity-0 scale-125 filter blur-md pointer-events-none' : 'opacity-100 scale-100'
         }`}>
           <div className="flex justify-center pt-2">
@@ -218,7 +228,7 @@
 
           <div className="flex-1 flex flex-col items-center justify-center">
             <div className="relative animate-float-disc flex items-center justify-center mb-10">
-              <div className="w-56 h-56 rounded-full p-2 bg-gradient-to-tr from-slate-300 via-white to-slate-400 shadow-[0_25px_60px_rgba(255,255,255,0.15)] flex items-center justify-center">
+              <div className="w-56 h-56 rounded-full p-2 bg-gradient-to-tr from-slate-300 via-white to-slate-400 shadow-[0_25px_60px_rgba(0,0,0,0.15)] flex items-center justify-center">
                 <div className="w-full h-full rounded-full airtag-disc-3d flex items-center justify-center p-6 relative overflow-hidden">
                   <div className="absolute inset-2 rounded-full border border-slate-300/60 pointer-events-none"></div>
                   <img 
@@ -231,10 +241,10 @@
             </div>
 
             <div className="text-center px-4 max-w-xs">
-              <h1 className="text-3xl font-extrabold text-white tracking-tight leading-snug">
+              <h1 className="text-3xl font-extrabold text-white tracking-tight leading-snug drop-shadow-md">
                 {step === 1 ? "Lose your knack for losing things." : "MiniProject III."}
               </h1>
-              <p className="text-sm text-slate-400 mt-2 font-medium">
+              <p className="text-sm text-white/80 mt-2 font-medium">
                 TrackoVex • A Simple Solution
               </p>
             </div>
@@ -252,9 +262,6 @@
       );
     }
 
-    // ==========================================
-    // 2. CANVAS-BASED SWARMING DOTS RADAR RING
-    // ==========================================
     function ParticleRadarRing() {
       const canvasRef = useRef(null);
 
@@ -319,9 +326,6 @@
       );
     }
 
-    // ==========================================
-    // 3. MINIMAL DIRECTION ARROW WITH ARC
-    // ==========================================
     function DirectionArrowView({ angle = 45 }) {
       return (
         <div className="relative flex flex-col items-center justify-center my-6">
@@ -340,7 +344,7 @@
             </svg>
 
             <div 
-              className="relative transition-transform duration-500 ease-out"
+              className="relative transition-transform duration-500 ease-out drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]"
               style={{ transform: `rotate(${angle}deg)` }}
             >
               <svg width="140" height="140" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -358,61 +362,40 @@
       );
     }
 
-    // ==========================================
-    // 4. MAIN AIRTAG HOMEPAGE COMPONENT
-    // ==========================================
     function TrackoVexApp() {
       const [showIntro, setShowIntro] = useState(true);
-      
-      // Multiple devices array
       const [devices, setDevices] = useState([]);
       const [activeDeviceId, setActiveDeviceId] = useState(null);
-
-      // Search state: 'searching' vs 'found'
       const [searchState, setSearchState] = useState("searching");
-      
-      // Dynamic simulated distance and angle
       const [distanceVal, setDistanceVal] = useState(7);
       const [directionLabel, setDirectionLabel] = useState("to your right");
       const [arrowAngle, setArrowAngle] = useState(0);
-
-      // Buzzer Active state
       const [isBuzzerSounding, setIsBuzzerSounding] = useState(false);
-
-      // Bluetooth Scanner Modal State
       const [isScanningBLE, setIsScanningBLE] = useState(false);
       const [bleStatus, setBleStatus] = useState("idle");
       const [discoveredESP, setDiscoveredESP] = useState(null);
-
-      // Multiple Device Switcher Drawer State
       const [showDeviceDrawer, setShowDeviceDrawer] = useState(false);
-
-      // Renaming State
       const [isRenaming, setIsRenaming] = useState(false);
       const [renameInput, setRenameInput] = useState("");
-
-      // Feedback Toast
       const [toastMsg, setToastMsg] = useState(null);
+      const [ripples, setRipples] = useState([]);
 
       const notify = (msg) => {
         setToastMsg(msg);
         setTimeout(() => setToastMsg(null), 3000);
       };
 
-      // Get Active Selected Device
       const currentDevice = useMemo(() => {
         return devices.find(d => d.id === activeDeviceId) || devices[0] || null;
       }, [devices, activeDeviceId]);
 
-      // TRIGGER ALERT BUZZER ON THE PRE-INSTALLED BOTTOM BUTTON
       const handleTriggerBottomBuzzer = () => {
         setIsBuzzerSounding(true);
         window.triggerESP32BuzzerAlarm();
-        notify(`🚨 Buzzer Sounding on ${currentDevice?.name || "TrackoVex"} (ESP32)!`);
+        notify(` Buzzer Sounding on ${currentDevice?.name || "TrackoVex"} (ESP32)!`);
         setTimeout(() => setIsBuzzerSounding(false), 2200);
       };
 
-      // Periodic UWB distance and angle jitter
       useEffect(() => {
         if (!currentDevice) return;
         const interval = setInterval(() => {
@@ -427,7 +410,6 @@
         return () => clearInterval(interval);
       }, [currentDevice, searchState]);
 
-      // Web Bluetooth / Simulated ESP32 BLE Connect
       const startBLEScan = async () => {
         setIsScanningBLE(true);
         setBleStatus("scanning");
@@ -453,7 +435,6 @@
           }
         }
 
-        // ESP32 Discovery Simulation
         setTimeout(() => {
           const count = devices.length + 1;
           setDiscoveredESP({
@@ -466,7 +447,6 @@
         }, 1600);
       };
 
-      // Pair & Register
       const confirmPairDevice = () => {
         if (!discoveredESP) return;
         const defaultNames = ["Ben’s Camera", "Car Keys", "MacBook Sleeve", "Travel Suitcase"];
@@ -496,7 +476,6 @@
         }, 2800);
       };
 
-      // Rename handlers
       const openRename = (dev) => {
         setRenameInput(dev.name);
         setIsRenaming(true);
@@ -518,383 +497,51 @@
         notify(`Removed "${currentDevice.name}"`);
       };
 
+      // Screen Touch Animation Handler
+      const handleScreenTouch = (e) => {
+        const x = e.clientX || (e.touches && e.touches[0].clientX);
+        const y = e.clientY || (e.touches && e.touches[0].clientY);
+        
+        if (x === undefined || y === undefined) return;
+
+        const newRipple = { id: Date.now(), x, y };
+        setRipples(prev => [...prev, newRipple]);
+
+        setTimeout(() => {
+          setRipples(prev => prev.filter(r => r.id !== newRipple.id));
+        }, 600);
+      };
+
       return (
-        <div className="relative w-screen h-screen flex flex-col bg-black text-white overflow-hidden select-none font-sans">
-          
-          {/* 1. Animated Intro Zoom-Out Splash */}
+        <div 
+          onPointerDown={handleScreenTouch}
+          className="relative w-screen h-screen flex flex-col bg-[#00FF00] text-white overflow-hidden select-none font-sans"
+        >
+          {/* Render Touch Ripples */}
+          {ripples.map(ripple => (
+            <div 
+              key={ripple.id} 
+              className="touch-ripple"
+              style={{ left: ripple.x, top: ripple.y }}
+            />
+          ))}
+
           {showIntro && (
             <IntroSplash onContinue={() => setShowIntro(false)} />
           )}
 
-          {/* Toast Notification */}
           {toastMsg && (
             <div className="fixed top-6 inset-x-6 z-50 flex items-center justify-center pointer-events-none">
               <div className="px-5 py-2.5 rounded-full ios-liquid-glass shadow-2xl text-white text-xs font-semibold flex items-center gap-2 animate-bounce">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                <span className="w-2 h-2 rounded-full bg-emerald-100 animate-ping"></span>
                 <span>{toastMsg}</span>
               </div>
             </div>
           )}
 
-          {/* ========================================================
-              TOP STATUS BAR & HEADER WITH BRANDING LOGO IN TOP-LEFT
-              ======================================================== */}
           <div className="w-full pt-12 px-6 pb-3 flex items-start justify-between z-20">
             <div className="flex items-center gap-3">
-              {/* Branding Logo in Top-Left Corner */}
               <img 
                 src="logo_t.jpeg" 
-                alt="TrackoVex Logo" 
-                className="h-9 w-auto max-w-[110px] object-contain rounded-md filter brightness-110 drop-shadow-[0_2px_8px_rgba(255,255,255,0.15)]"
-              />
+         
 
-              <div className="flex flex-col">
-                {/* Finding Label */}
-                <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 font-sans">
-                  {currentDevice ? (searchState === "searching" ? "FINDING" : "NEARBY") : "TRACKOVEX"}
-                </div>
-
-                {/* Title: Device Name */}
-                <div className="flex items-center gap-1.5 mt-0.5">
-                  <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white font-sans truncate max-w-[150px] sm:max-w-xs">
-                    {currentDevice ? currentDevice.name : "No Device Paired"}
-                  </h1>
-                  {currentDevice && (
-                    <button 
-                      onClick={() => openRename(currentDevice)}
-                      className="p-1 rounded-full text-neutral-400 hover:text-white transition-colors"
-                      title="Rename"
-                    >
-                      <Icon name="edit-2" size={14} />
-                    </button>
-                  )}
-                </div>
-
-                {/* Real-time Battery Indicator */}
-                {currentDevice && (
-                  <div className="flex items-center gap-1.5 mt-1">
-                    <div className="relative flex items-center">
-                      <div className="w-5 h-2.5 rounded-[3px] border border-white/60 p-[1px] flex items-center">
-                        <div 
-                          className={`h-full rounded-[1px] transition-all duration-500 ${
-                            currentDevice.battery > 20 ? 'bg-[#30d158]' : 'bg-[#ff453a]'
-                          }`}
-                          style={{ width: `${currentDevice.battery}%` }}
-                        ></div>
-                      </div>
-                      <div className="w-[2px] h-[4px] bg-white/60 rounded-r-[1px] ml-[1px]"></div>
-                    </div>
-                    <span className="text-[10px] font-semibold text-neutral-300 font-mono tracking-tight">
-                      {currentDevice.battery}%
-                    </span>
-                    <span className="text-[9px] text-neutral-500 ml-1">• ESP32 BLE</span>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* UPPER SPACE ACTION CONTROLS */}
-            <div className="flex items-center gap-2 pt-1">
-              {currentDevice && (
-                <button 
-                  onClick={() => setSearchState(prev => prev === 'searching' ? 'found' : 'searching')}
-                  className="px-3 py-2 rounded-full ios-liquid-btn text-[11px] font-bold text-neutral-200"
-                  title="Toggle Searching / Found State"
-                >
-                  {searchState === 'searching' ? "View Arrow" : "View Radar"}
-                </button>
-              )}
-
-              {/* [+] Plus Button */}
-              <button 
-                onClick={startBLEScan}
-                className="w-10 h-10 rounded-full ios-liquid-btn flex items-center justify-center text-white hover:text-blue-400 shadow-lg active:scale-90"
-                title="Add Another TrackoVex Beacon via BLE"
-              >
-                <Icon name="plus" size={20} className="stroke-[2.5]" />
-              </button>
-
-              {/* Multi-Device Pill Selector */}
-              {devices.length > 1 && (
-                <button 
-                  onClick={() => setShowDeviceDrawer(true)}
-                  className="px-2.5 py-1.5 rounded-full ios-liquid-btn text-[11px] font-bold text-blue-400 flex items-center gap-1"
-                  title="Switch Active Device"
-                >
-                  <Icon name="layers" size={13} />
-                  <span>{devices.length}</span>
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* ========================================================
-              CENTER CANVAS: MINIMAL DIRECTION ARROW & SWARMING DOTS
-              ======================================================== */}
-          <div className="flex-1 w-full flex flex-col items-center justify-center relative px-6 z-10">
-            
-            {!currentDevice && (
-              <div className="flex flex-col items-center justify-center text-center p-8">
-                <div className="w-24 h-24 rounded-full ios-liquid-glass flex items-center justify-center mb-6 shadow-2xl">
-                  <Icon name="bluetooth" size={38} className="text-blue-500" />
-                </div>
-                <h2 className="text-xl font-bold text-white">No TrackoVex AirTag Found</h2>
-                <p className="text-sm text-neutral-400 max-w-xs mt-2 leading-relaxed">
-                  Power ON your Bluetooth beacon and tap the plus key to pair multiple units.
-                </p>
-                <button 
-                  onClick={startBLEScan}
-                  className="mt-6 px-7 py-3.5 rounded-full bg-white text-black text-sm font-bold shadow-2xl active:scale-95 transition-transform"
-                >
-                  Pair TrackoVex (BLE)
-                </button>
-              </div>
-            )}
-
-            {currentDevice && (
-              <div className="w-full flex flex-col items-center justify-center">
-                {searchState === "searching" ? (
-                  <div className="flex flex-col items-center justify-center animate-fade-in">
-                    <ParticleRadarRing />
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center animate-fade-in">
-                    <DirectionArrowView angle={arrowAngle} />
-                  </div>
-                )}
-              </div>
-            )}
-
-          </div>
-
-          {/* ========================================================
-              BOTTOM SECTION
-              ======================================================== */}
-          {currentDevice && (
-            <div className="w-full px-8 pb-12 pt-2 z-20 flex flex-col justify-end">
-              
-              {/* Estimated Distance Readout */}
-              <div className="mb-6 select-none">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-6xl sm:text-7xl font-extrabold tracking-tight text-white font-sans">
-                    {searchState === "searching" ? "11" : distanceVal}
-                  </span>
-                  <span className="text-4xl sm:text-5xl font-light text-neutral-400 font-sans">
-                    ft
-                  </span>
-                </div>
-
-                {searchState === "found" && (
-                  <div className="text-2xl sm:text-3xl font-normal text-neutral-400 tracking-tight mt-0.5 font-sans">
-                    to your <span className="text-white font-bold">{directionLabel.replace("to your ", "")}</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Bottom iOS Circular Buttons */}
-              <div className="flex items-center justify-between">
-                
-                {/* Left: Circle 'X' Button to close / unpair */}
-                <button 
-                  onClick={handleUnpair}
-                  className="w-16 h-16 rounded-full ios-circle-btn flex items-center justify-center text-white hover:text-rose-400"
-                  title="Disconnect Device"
-                >
-                  <Icon name="x" size={26} className="stroke-[2.5]" />
-                </button>
-
-                {/* Right: ALERT BUZZER BUTTON */}
-                <button 
-                  onClick={handleTriggerBottomBuzzer}
-                  className={`w-16 h-16 rounded-full ios-circle-btn flex items-center justify-center transition-all ${
-                    isBuzzerSounding ? 'ios-circle-btn-buzzer-active animate-buzzer-ping text-rose-300' : 'text-white'
-                  }`}
-                  title="Alert TrackoVex Buzzer (ESP32)"
-                >
-                  <Icon 
-                    name={isBuzzerSounding ? "bell-ring" : "volume-2"} 
-                    size={26} 
-                    className={`stroke-[2.2] ${isBuzzerSounding ? 'animate-bounce text-rose-300' : ''}`} 
-                  />
-                </button>
-
-              </div>
-
-            </div>
-          )}
-
-          {/* ========================================================
-              DRAWER: MULTI-TRACKOVEX BEACON SWITCHER
-              ======================================================== */}
-          {showDeviceDrawer && (
-            <div className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:p-6 bg-black/80 backdrop-blur-xl animate-fade-in">
-              <div className="w-full sm:max-w-md rounded-t-[36px] sm:rounded-[36px] ios-liquid-glass p-6 shadow-2xl space-y-4 border border-white/20">
-                <div className="flex items-center justify-between pb-1">
-                  <div>
-                    <h3 className="text-lg font-bold text-white">Active TrackoVex Devices</h3>
-                    <p className="text-xs text-neutral-400">Switch focus between connected beacons</p>
-                  </div>
-                  <button onClick={() => setShowDeviceDrawer(false)} className="p-1 text-neutral-400 hover:text-white">
-                    <Icon name="x" size={20} />
-                  </button>
-                </div>
-
-                <div className="space-y-2.5 max-h-60 overflow-y-auto">
-                  {devices.map(dev => {
-                    const isActive = dev.id === currentDevice?.id;
-                    return (
-                      <div 
-                        key={dev.id}
-                        onClick={() => {
-                          setActiveDeviceId(dev.id);
-                          setShowDeviceDrawer(false);
-                          notify(`Switched focus to ${dev.name}`);
-                        }}
-                        className={`p-3.5 rounded-2xl flex items-center justify-between cursor-pointer transition-all border ${
-                          isActive 
-                            ? 'bg-blue-600/25 border-blue-400 shadow-md' 
-                            : 'bg-white/5 border-white/10 hover:bg-white/10'
-                        }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                            isActive ? 'bg-blue-500 text-white' : 'bg-white/10 text-neutral-300'
-                          }`}>
-                            <Icon name="radio" size={18} />
-                          </div>
-                          <div>
-                            <div className="text-sm font-bold text-white flex items-center gap-2">
-                              <span>{dev.name}</span>
-                              {isActive && <span className="w-2 h-2 rounded-full bg-blue-400"></span>}
-                            </div>
-                            <div className="text-[11px] text-neutral-400 font-mono">Battery: {dev.battery}%</div>
-                          </div>
-                        </div>
-
-                        <div className="text-right">
-                          <span className={`text-xs font-semibold ${isActive ? 'text-blue-400' : 'text-neutral-400'}`}>
-                            {isActive ? "Active" : "Select"}
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <button 
-                  onClick={() => {
-                    setShowDeviceDrawer(false);
-                    startBLEScan();
-                  }}
-                  className="w-full py-3.5 rounded-2xl bg-white text-black text-xs font-bold shadow-lg flex items-center justify-center gap-2"
-                >
-                  <Icon name="plus" size={16} />
-                  <span>Pair Another TrackoVex</span>
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* ========================================================
-              MODAL: RENAME DEVICE
-              ======================================================== */}
-          {isRenaming && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/75 backdrop-blur-xl animate-fade-in">
-              <div className="w-full max-w-sm rounded-[32px] ios-liquid-glass p-7 shadow-2xl space-y-4 border border-white/20">
-                <div className="text-center">
-                  <h3 className="text-xl font-bold text-white">Rename TrackoVex</h3>
-                  <p className="text-xs text-neutral-400 mt-1">Customize device label</p>
-                </div>
-
-                <div>
-                  <input 
-                    type="text"
-                    value={renameInput}
-                    onChange={(e) => setRenameInput(e.target.value)}
-                    placeholder="e.g. Ben’s Camera, Car Keys, Backpack"
-                    autoFocus
-                    className="w-full px-4 py-3.5 rounded-2xl bg-white/10 border border-white/20 text-white text-base font-semibold focus:outline-none focus:ring-2 focus:ring-white"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-3 pt-2">
-                  <button 
-                    onClick={() => setIsRenaming(false)}
-                    className="py-3 rounded-2xl bg-white/10 text-white text-xs font-bold hover:bg-white/20"
-                  >
-                    Cancel
-                  </button>
-                  <button 
-                    onClick={saveRename}
-                    className="py-3 rounded-2xl bg-white text-black text-xs font-bold shadow-lg active:scale-95 transition-all"
-                  >
-                    Save
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ========================================================
-              MODAL: ESP32 BLUETOOTH PAIRING
-              ======================================================== */}
-          {isScanningBLE && (
-            <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 bg-black/75 backdrop-blur-xl animate-fade-in">
-              <div className="w-full sm:max-w-sm rounded-t-[36px] sm:rounded-[36px] ios-liquid-glass p-7 shadow-2xl space-y-5 border border-white/20">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Icon name="bluetooth" size={22} className="text-blue-400" />
-                    <h3 className="text-lg font-bold text-white">Pair TrackoVex BLE</h3>
-                  </div>
-                  <button onClick={() => setIsScanningBLE(false)} className="p-1 text-neutral-400 hover:text-white">
-                    <Icon name="x" size={20} />
-                  </button>
-                </div>
-
-                {bleStatus === "scanning" && (
-                  <div className="py-8 flex flex-col items-center text-center">
-                    <div className="w-16 h-16 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center mb-3 animate-spin">
-                      <Icon name="radio" size={30} />
-                    </div>
-                    <p className="text-sm font-bold text-white">Listening for Bluetooth Signals...</p>
-                    <p className="text-xs text-neutral-400 mt-1">Ensure your TrackoVex is nearby</p>
-                  </div>
-                )}
-
-                {bleStatus === "discovered" && discoveredESP && (
-                  <div className="space-y-4">
-                    <div className="p-4 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center">
-                          <Icon name="cpu" size={20} />
-                        </div>
-                        <div>
-                          <div className="text-sm font-bold text-white">{discoveredESP.rawName}</div>
-                          <div className="text-[11px] text-neutral-400 font-mono">Battery: {discoveredESP.battery}%</div>
-                        </div>
-                      </div>
-                      <span className="text-xs font-mono font-bold text-emerald-400">{discoveredESP.rssi}</span>
-                    </div>
-
-                    <button 
-                      onClick={confirmPairDevice}
-                      className="w-full py-4 rounded-2xl bg-white text-black text-xs font-bold shadow-xl active:scale-95 transition-all"
-                    >
-                      Connect & Begin Tracking
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-        </div>
-      );
-    }
-
-    // Mount Application
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<TrackoVexApp />);
-  </script>
-</body>
-</html>
