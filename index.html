@@ -16,49 +16,39 @@
           },
           colors: {
             ios: {
-              bg: '#011307',
-              glass: 'rgba(0, 255, 102, 0.12)',
-              glassBorder: 'rgba(0, 255, 102, 0.3)',
-              arrow: '#ffffff',
-              green: '#00ff66',
-              emerald: '#059669',
-              blue: '#0a84ff',
+              bg: '#040d07',
+              surface: 'rgba(255, 255, 255, 0.12)',
+              border: 'rgba(255, 255, 255, 0.28)',
+              green: '#34c759',        /* Apple iOS Minimal System Green */
+              greenMuted: '#248a3d',
+              greenSoft: '#a7f3d0',
               gray: '#8e8e93',
               buzzer: '#ff453a'
             }
           },
           animation: {
-            'float-disc': 'floatDisc 4.5s ease-in-out infinite',
-            'liquid-glow': 'liquidGlow 4s ease-in-out infinite alternate',
-            'buzzer-ping': 'buzzerPing 0.75s ease-in-out infinite',
-            'dock-bounce': 'dockBounce 0.45s cubic-bezier(0.16, 1, 0.3, 1)',
-            'wave-expand': 'waveExpand 3s cubic-bezier(0.1, 0.8, 0.3, 1) infinite',
-            'sheen-slide': 'sheenSlide 3.5s ease-in-out infinite',
+            'float-disc': 'floatDisc 5s ease-in-out infinite',
+            'ambient-breathe': 'ambientBreathe 6s ease-in-out infinite alternate',
+            'buzzer-gentle': 'buzzerGentle 1.2s ease-in-out infinite',
+            'gentle-bloom': 'gentleBloom 0.85s cubic-bezier(0.2, 0.8, 0.2, 1) forwards'
           },
           keyframes: {
             floatDisc: {
-              '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
-              '50%': { transform: 'translateY(-10px) rotate(1deg)' }
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-7px)' }
             },
-            liquidGlow: {
-              '0%': { filter: 'drop-shadow(0 0 15px rgba(0, 255, 102, 0.35))' },
-              '100%': { filter: 'drop-shadow(0 0 35px rgba(0, 255, 102, 0.75))' }
+            ambientBreathe: {
+              '0%': { opacity: '0.4' },
+              '100%': { opacity: '0.7' }
             },
-            buzzerPing: {
-              '0%, 100%': { transform: 'scale(1)', boxShadow: '0 0 0 0 rgba(255, 69, 58, 0.8)' },
-              '50%': { transform: 'scale(1.1)', boxShadow: '0 0 35px 12px rgba(255, 69, 58, 0.6)' }
+            buzzerGentle: {
+              '0%, 100%': { transform: 'scale(1)', boxShadow: '0 0 0 0 rgba(255, 69, 58, 0.4)' },
+              '50%': { transform: 'scale(1.06)', boxShadow: '0 0 24px 6px rgba(255, 69, 58, 0.35)' }
             },
-            dockBounce: {
-              '0%': { transform: 'translateY(60px) scale(0.9)', opacity: '0' },
-              '100%': { transform: 'translateY(0) scale(1)', opacity: '1' }
-            },
-            waveExpand: {
-              '0%': { transform: 'scale(0.8)', opacity: '0.9' },
-              '100%': { transform: 'scale(2.4)', opacity: '0' }
-            },
-            sheenSlide: {
-              '0%': { transform: 'translateX(-120%) skewX(-20deg)' },
-              '50%, 100%': { transform: 'translateX(220%) skewX(-20deg)' }
+            gentleBloom: {
+              '0%': { transform: 'scale(0.35)', opacity: '0.9', filter: 'blur(4px)' },
+              '50%': { transform: 'scale(1.3)', opacity: '0.45', filter: 'blur(16px)' },
+              '100%': { transform: 'scale(2.2)', opacity: '0', filter: 'blur(28px)' }
             }
           }
         }
@@ -72,9 +62,52 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
 
+  <!-- Web Audio ESP32 Buzzer Sound Synthesizer -->
+  <script>
+    window.triggerESP32BuzzerAlarm = function() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const now = audioCtx.currentTime;
+        [0.0, 0.16, 0.32, 0.48].forEach(offset => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = "square";
+          osc.frequency.setValueAtTime(2600, now + offset);
+          gain.gain.setValueAtTime(0, now + offset);
+          gain.gain.linearRampToValueAtTime(0.35, now + offset + 0.015);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.12);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now + offset);
+          osc.stop(now + offset + 0.14);
+        });
+      } catch (e) {
+        console.warn("Audio blocked:", e);
+      }
+    };
+
+    window.playGentleTap = function() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(600, now);
+        osc.frequency.exponentialRampToValueAtTime(320, now + 0.08);
+        gain.gain.setValueAtTime(0.04, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.09);
+      } catch(e) {}
+    };
+  </script>
+
   <style>
     /* ========================================================
-       GLOBAL & 60 FPS LIQUID MORPHISM STYLES
+       APPLE-STYLE MINIMAL LIQUID GLASS & AMBIENT VIDEO SYSTEM
        ======================================================== */
     * {
       box-sizing: border-box;
@@ -87,7 +120,7 @@
       margin: 0;
       padding: 0;
       overflow: hidden;
-      background: radial-gradient(circle at 50% 20%, #032a12 0%, #011307 55%, #000703 100%);
+      background-color: #040d07;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
@@ -103,237 +136,241 @@
       flex-direction: column;
       overflow: hidden;
       position: relative;
+      z-index: 2;
     }
 
-    /* Ambient Liquid Background Animation */
-    .ambient-canvas {
+    /* Ambient Video & Gradient Layer */
+    .bg-video-wrapper {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .bg-video {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      transform: translate(-50%, -50%);
+      object-fit: cover;
+      opacity: 0.38;
+      filter: contrast(1.15) brightness(0.7) saturate(1.2);
+    }
+
+    .bg-overlay-gradient {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 25%, rgba(10, 46, 22, 0.65) 0%, rgba(4, 18, 9, 0.88) 65%, #030a05 100%);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    /* Fluid Fallback Canvas when video is offline/blocked */
+    .bg-fluid-canvas {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
-      pointer-events: none;
-      z-index: 1;
+      opacity: 0.55;
     }
 
     /* ========================================================
-       PREMIUM LIQUID GLASS MORPHISM SYSTEM
+       AUTHENTIC APPLE LIQUID GLASS (Matches Reference Images)
        ======================================================== */
-    .liquid-glass-panel {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(0, 255, 102, 0.08) 45%, rgba(0, 25, 10, 0.42) 100%);
-      backdrop-filter: blur(40px) saturate(220%);
-      -webkit-backdrop-filter: blur(40px) saturate(220%);
-      border: 1.5px solid rgba(255, 255, 255, 0.35);
-      border-top: 2px solid rgba(255, 255, 255, 0.75);
-      border-left: 1.5px solid rgba(255, 255, 255, 0.55);
+    /* Liquid Glass Pill Dock */
+    .apple-glass-dock {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(35px) saturate(180%);
+      -webkit-backdrop-filter: blur(35px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.32);
+      border-top: 1.6px solid rgba(255, 255, 255, 0.65);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.18);
       box-shadow: 
-        0 25px 60px -10px rgba(0, 0, 0, 0.75),
-        0 0 35px rgba(0, 255, 102, 0.2),
-        inset 0 1.5px 3px rgba(255, 255, 255, 0.8),
-        inset 0 -2px 6px rgba(0, 0, 0, 0.35);
+        0 24px 48px -12px rgba(0, 0, 0, 0.55),
+        inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.65),
+        inset 0 -1px 2px 0 rgba(0, 0, 0, 0.25);
+      border-radius: 9999px;
       position: relative;
       overflow: hidden;
     }
 
-    .liquid-glass-card {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.16) 0%, rgba(0, 255, 102, 0.06) 50%, rgba(2, 28, 12, 0.4) 100%);
-      backdrop-filter: blur(32px) saturate(200%);
-      -webkit-backdrop-filter: blur(32px) saturate(200%);
-      border: 1.5px solid rgba(255, 255, 255, 0.3);
-      border-top: 1.8px solid rgba(255, 255, 255, 0.65);
-      box-shadow: 
-        0 15px 35px rgba(0, 0, 0, 0.55),
-        0 0 20px rgba(0, 255, 102, 0.15),
-        inset 0 1px 2px rgba(255, 255, 255, 0.65);
-      position: relative;
-    }
-
-    /* Specular Highlights for Liquid Glass */
-    .specular-gloss::before {
+    /* Specular Arc highlight as in Image 1 */
+    .apple-glass-dock::before {
       content: '';
       position: absolute;
-      top: 0; left: 0; right: 0; height: 42%;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.02) 100%);
+      top: -10%;
+      right: 18%;
+      width: 48%;
+      height: 70%;
+      background: radial-gradient(ellipse at top, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0) 72%);
+      pointer-events: none;
       border-radius: inherit;
-      pointer-events: none;
     }
 
-    /* Liquid Glass Continue & Action Button */
-    .liquid-glass-btn {
-      background: linear-gradient(135deg, rgba(0, 255, 102, 0.95) 0%, rgba(0, 220, 85, 0.85) 60%, rgba(0, 180, 70, 0.95) 100%);
-      backdrop-filter: blur(20px) saturate(220%);
-      -webkit-backdrop-filter: blur(20px) saturate(220%);
-      border: 2px solid rgba(255, 255, 255, 0.7);
-      border-top: 2.5px solid #ffffff;
+    /* General Liquid Glass Panel */
+    .apple-glass-panel {
+      background: rgba(255, 255, 255, 0.11);
+      backdrop-filter: blur(32px) saturate(170%);
+      -webkit-backdrop-filter: blur(32px) saturate(170%);
+      border: 1px solid rgba(255, 255, 255, 0.26);
+      border-top: 1.5px solid rgba(255, 255, 255, 0.55);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
       box-shadow: 
-        0 12px 30px rgba(0, 255, 102, 0.45),
-        0 0 35px rgba(0, 255, 102, 0.4),
-        inset 0 2px 4px rgba(255, 255, 255, 0.9),
-        inset 0 -3px 6px rgba(0, 60, 20, 0.4);
+        0 20px 45px -10px rgba(0, 0, 0, 0.55),
+        inset 0 1.2px 1.5px 0 rgba(255, 255, 255, 0.55),
+        inset 0 -1px 2px 0 rgba(0, 0, 0, 0.2);
+      border-radius: 28px;
       position: relative;
       overflow: hidden;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .liquid-glass-btn:hover {
-      transform: translateY(-2px) scale(1.02);
-      box-shadow: 
-        0 16px 38px rgba(0, 255, 102, 0.55),
-        0 0 45px rgba(0, 255, 102, 0.55),
-        inset 0 2px 5px #ffffff;
-    }
-    .liquid-glass-btn:active {
-      transform: translateY(1px) scale(0.96);
-      box-shadow: 
-        0 6px 18px rgba(0, 255, 102, 0.35),
-        inset 0 1px 2px rgba(255, 255, 255, 0.7);
     }
 
-    /* Secondary Liquid Glass Button */
-    .liquid-secondary-btn {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(0, 255, 102, 0.1) 100%);
-      backdrop-filter: blur(25px) saturate(210%);
-      -webkit-backdrop-filter: blur(25px) saturate(210%);
-      border: 1.5px solid rgba(255, 255, 255, 0.35);
-      border-top: 2px solid rgba(255, 255, 255, 0.7);
+    /* Liquid Glass Buttons & Controls (Image 2 style) */
+    .apple-glass-btn {
+      background: rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(28px) saturate(170%);
+      -webkit-backdrop-filter: blur(28px) saturate(170%);
+      border: 1px solid rgba(255, 255, 255, 0.32);
+      border-top: 1.5px solid rgba(255, 255, 255, 0.65);
       box-shadow: 
-        0 8px 24px rgba(0, 0, 0, 0.4),
-        inset 0 1px 2px rgba(255, 255, 255, 0.7);
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        0 8px 22px rgba(0, 0, 0, 0.3),
+        inset 0 1px 1.5px rgba(255, 255, 255, 0.6);
+      transition: all 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
-    .liquid-secondary-btn:active {
-      transform: scale(0.92);
-      background: rgba(0, 255, 102, 0.3);
-      box-shadow: 0 0 20px rgba(0, 255, 102, 0.5);
+    .apple-glass-btn:active {
+      transform: scale(0.95);
+      background: rgba(255, 255, 255, 0.22);
     }
 
-    /* Circle Action Buttons (Buzzer, Cancel, Radar Toggle) */
-    .liquid-circle-btn {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(0, 255, 102, 0.12) 100%);
-      backdrop-filter: blur(30px) saturate(220%);
-      -webkit-backdrop-filter: blur(30px) saturate(220%);
+    /* Liquid Glass Continue / Primary Button */
+    .apple-primary-glass-btn {
+      background: linear-gradient(135deg, rgba(52, 199, 89, 0.85) 0%, rgba(36, 138, 61, 0.9) 100%);
+      backdrop-filter: blur(25px) saturate(180%);
+      -webkit-backdrop-filter: blur(25px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-top: 1.8px solid rgba(255, 255, 255, 0.85);
+      box-shadow: 
+        0 12px 28px rgba(52, 199, 89, 0.32),
+        inset 0 1.5px 2px rgba(255, 255, 255, 0.75),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.25);
+      transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .apple-primary-glass-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 32px rgba(52, 199, 89, 0.4);
+    }
+    .apple-primary-glass-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* Liquid Glass Circle (Image 2 style) */
+    .apple-glass-circle {
+      background: rgba(255, 255, 255, 0.13);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.32);
+      border-top: 1.8px solid rgba(255, 255, 255, 0.65);
+      box-shadow: 
+        0 12px 28px rgba(0, 0, 0, 0.4),
+        inset 0 1.2px 2px rgba(255, 255, 255, 0.65),
+        inset 0 -1.5px 2px rgba(0, 0, 0, 0.25);
+      transition: all 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .apple-glass-circle:active {
+      transform: scale(0.93);
+    }
+
+    /* Central Liquid Bluetooth Orb */
+    .apple-bluetooth-orb {
+      background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.28) 0%, rgba(52, 199, 89, 0.12) 50%, rgba(2, 22, 10, 0.45) 100%);
+      backdrop-filter: blur(35px) saturate(180%);
+      -webkit-backdrop-filter: blur(35px) saturate(180%);
       border: 1.5px solid rgba(255, 255, 255, 0.45);
-      border-top: 2px solid rgba(255, 255, 255, 0.8);
-      box-shadow: 
-        0 12px 28px rgba(0, 0, 0, 0.55),
-        0 0 20px rgba(0, 255, 102, 0.2),
-        inset 0 1.5px 2px rgba(255, 255, 255, 0.75);
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .liquid-circle-btn:active {
-      transform: scale(0.90);
-    }
-
-    .liquid-circle-buzzer-active {
-      background: linear-gradient(135deg, rgba(255, 69, 58, 0.45) 0%, rgba(255, 69, 58, 0.25) 100%) !important;
-      border: 2px solid #ff453a !important;
-      border-top: 2px solid #ff8b85 !important;
-      box-shadow: 
-        0 0 40px 10px rgba(255, 69, 58, 0.75),
-        inset 0 1.5px 3px rgba(255, 255, 255, 0.9) !important;
-    }
-
-    /* Liquid Glass Floating Dock */
-    .liquid-floating-dock {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(0, 255, 102, 0.15) 50%, rgba(2, 38, 16, 0.45) 100%);
-      backdrop-filter: blur(45px) saturate(240%);
-      -webkit-backdrop-filter: blur(45px) saturate(240%);
-      border: 1.8px solid rgba(255, 255, 255, 0.45);
       border-top: 2.2px solid rgba(255, 255, 255, 0.85);
-      border-left: 1.8px solid rgba(255, 255, 255, 0.6);
       box-shadow: 
-        0 25px 50px rgba(0, 0, 0, 0.7),
-        0 0 40px rgba(0, 255, 102, 0.35),
-        inset 0 2px 3px rgba(255, 255, 255, 0.9),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+        0 24px 55px rgba(0, 0, 0, 0.6),
+        0 0 35px rgba(52, 199, 89, 0.2),
+        inset 0 3px 5px rgba(255, 255, 255, 0.75),
+        inset 0 -4px 8px rgba(0, 0, 0, 0.35);
+      border-radius: 9999px;
     }
 
-    /* Center Bluetooth Liquid Sphere */
-    .liquid-bluetooth-sphere {
-      background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.9) 0%, rgba(0, 255, 102, 0.5) 45%, rgba(1, 40, 16, 0.8) 95%);
-      backdrop-filter: blur(35px) saturate(220%);
-      -webkit-backdrop-filter: blur(35px) saturate(220%);
-      border: 2px solid rgba(255, 255, 255, 0.7);
-      border-top: 3px solid #ffffff;
-      box-shadow: 
-        0 25px 60px rgba(0, 0, 0, 0.8),
-        0 0 50px rgba(0, 255, 102, 0.5),
-        inset 0 4px 8px rgba(255, 255, 255, 0.95),
-        inset 0 -6px 12px rgba(0, 20, 10, 0.7);
-      position: relative;
+    /* Active Buzzer State */
+    .apple-buzzer-active {
+      background: rgba(255, 69, 58, 0.35) !important;
+      border: 1.5px solid rgba(255, 69, 58, 0.8) !important;
+      border-top: 2px solid #ff9b94 !important;
+      box-shadow: 0 0 30px 6px rgba(255, 69, 58, 0.45) !important;
     }
 
-    /* Liquid Glass Sliding Active Pill in Dock */
-    .liquid-dock-pill {
-      background: linear-gradient(135deg, rgba(0, 255, 102, 0.35) 0%, rgba(255, 255, 255, 0.25) 100%);
-      border: 1px solid rgba(0, 255, 102, 0.6);
-      box-shadow: 
-        0 4px 15px rgba(0, 255, 102, 0.4),
-        inset 0 1px 2px rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(15px);
-    }
-
-    /* Water Ripple Canvas */
-    #water-ripple-canvas {
+    /* GENTLE LIQUID TOUCH ANIMATION (Replaces harsh concentric ripples) */
+    .gentle-liquid-touch {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
+      width: 100px;
+      height: 100px;
+      margin-top: -50px;
+      margin-left: -50px;
+      border-radius: 50%;
       pointer-events: none;
-      z-index: 999;
+      z-index: 9999;
+      background: radial-gradient(circle, rgba(52, 199, 89, 0.35) 0%, rgba(255, 255, 255, 0.22) 40%, transparent 75%);
+      filter: blur(14px);
     }
 
-    /* Smooth 60 FPS View Transitions */
-    .page-view-enter {
-      animation: pageViewEnter 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-    @keyframes pageViewEnter {
-      0% { opacity: 0; transform: scale(0.95) translateY(12px); filter: blur(8px); }
-      100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0px); }
-    }
-
-    .modal-sheet-enter {
-      animation: sheetEnter 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-    @keyframes sheetEnter {
-      0% { transform: translateY(100%) scale(0.95); opacity: 0; }
-      100% { transform: translateY(0) scale(1); opacity: 1; }
-    }
-
-    /* Apple Grouped Settings Card */
-    .apple-glass-card {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.16) 0%, rgba(0, 255, 102, 0.05) 50%, rgba(0, 20, 8, 0.35) 100%);
-      backdrop-filter: blur(35px) saturate(210%);
-      -webkit-backdrop-filter: blur(35px) saturate(210%);
-      border: 1.5px solid rgba(255, 255, 255, 0.3);
-      border-top: 2px solid rgba(255, 255, 255, 0.65);
-      border-radius: 24px;
-      box-shadow: 
-        0 20px 45px rgba(0, 0, 0, 0.5),
-        inset 0 1.5px 2px rgba(255, 255, 255, 0.7);
+    /* Liquid Glass Settings Input & Cards */
+    .apple-settings-card {
+      background: rgba(255, 255, 255, 0.09);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-top: 1.5px solid rgba(255, 255, 255, 0.45);
+      border-radius: 20px;
       overflow: hidden;
     }
 
-    /* Liquid Glass Input */
-    .liquid-input {
-      background: rgba(0, 255, 102, 0.08);
-      border: 1.5px solid rgba(0, 255, 102, 0.35);
-      border-top: 1.5px solid rgba(255, 255, 255, 0.45);
-      backdrop-filter: blur(20px);
+    .apple-glass-input {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-top: 1.2px solid rgba(255, 255, 255, 0.4);
       color: #ffffff;
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
-      transition: all 0.25s ease;
+      transition: all 0.2s ease;
     }
-    .liquid-input:focus {
+    .apple-glass-input:focus {
       outline: none;
-      border-color: #00ff66;
-      background: rgba(0, 255, 102, 0.14);
-      box-shadow: 0 0 20px rgba(0, 255, 102, 0.4), inset 0 1px 3px rgba(255, 255, 255, 0.4);
+      border-color: #34c759;
+      background: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 0 16px rgba(52, 199, 89, 0.25);
     }
   </style>
 </head>
 <body>
-  <!-- WATER TOUCH 60 FPS RIPPLE CANVAS -->
-  <canvas id="water-ripple-canvas"></canvas>
+
+  <!-- ========================================================
+       BACKGROUND: AMBIENT FLUID VIDEO WITH SAGE/MINIMAL OVERLAY
+       ======================================================== -->
+  <div class="bg-video-wrapper">
+    <!-- Looping Organic Fluid Green Movement Video -->
+    <video 
+      class="bg-video" 
+      autoplay 
+      loop 
+      muted 
+      playsinline 
+      crossorigin="anonymous"
+    >
+      <source src="https://assets.mixkit.co/videos/preview/mixkit-liquid-movement-of-green-and-black-inks-41444-large.mp4" type="video/mp4" />
+    </video>
+    <!-- Fallback Canvas if video is blocked or offline -->
+    <canvas id="fallback-canvas" class="bg-fluid-canvas"></canvas>
+    <!-- Muted Dark Minimal Green Glass Gradient -->
+    <div class="bg-overlay-gradient"></div>
+  </div>
 
   <div id="root"></div>
 
@@ -342,166 +379,22 @@
 
     // ========================================================
     // ⚙️ EDITABLE SETTINGS VALUES IN HTML SCRIPT
-    // Customize any of these values directly below!
+    // Easily configure contact, info, and hardware below:
     // ========================================================
     const APP_CONFIG = {
       appName: "TrackoVex",
       tagline: "A Simple Solution",
-      version: "v3.2 Liquid Edition",
-      buildNumber: "2026.10.12-PROD",
+      version: "v3.3 Liquid Glass",
+      buildNumber: "2026.10.12",
       supportEmail: "support@trackovex.io",
-      supportPhone: "+1 (800) 555-TRACK",
+      supportPhone: "+1 (800) 555-8722",
       hardwareProtocol: "ESP32-S3 Ultra-Wideband & BLE 5.3",
       developerTeam: "TrackoVex Systems Engineering",
-      aboutDescription: "TrackoVex provides hyper-accurate Ultra-Wideband & Bluetooth Low Energy direction finding. Experience hardware-synchronized ESP32 buzzer triggers, directional compass tracking, and precision micro-radar.",
-      feedbackRecipient: "feedback@trackovex.io",
-      helpUrl: "https://trackovex.io/help"
+      aboutDescription: "TrackoVex provides real-time Ultra-Wideband & BLE precision location tracking with hardware-synchronized ESP32 buzzer triggers and fluid Apple-grade spatial direction finding.",
+      feedbackRecipient: "feedback@trackovex.io"
     };
 
-    // ========================================================
-    // WEB AUDIO SYNTHESIZERS (BUZZER + LIQUID TACTILE WATER SOUNDS)
-    // ========================================================
-    window.audioContextInstance = null;
-    function getAudioContext() {
-      if (!window.audioContextInstance) {
-        window.audioContextInstance = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (window.audioContextInstance.state === 'suspended') {
-        window.audioContextInstance.resume();
-      }
-      return window.audioContextInstance;
-    }
-
-    // ESP32 High-Gain Piezo Buzzer
-    window.triggerESP32BuzzerAlarm = function() {
-      try {
-        const ctx = getAudioContext();
-        const now = ctx.currentTime;
-        [0.0, 0.15, 0.30, 0.45].forEach(offset => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = "square";
-          osc.frequency.setValueAtTime(2730, now + offset);
-          gain.gain.setValueAtTime(0, now + offset);
-          gain.gain.linearRampToValueAtTime(0.45, now + offset + 0.015);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.12);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(now + offset);
-          osc.stop(now + offset + 0.14);
-        });
-      } catch (e) {
-        console.warn("Audio output blocked:", e);
-      }
-    };
-
-    // Soft Liquid Water Drop Sound for Navigation and Touches
-    window.playLiquidDropSound = function(pitchMultiplier = 1) {
-      try {
-        const ctx = getAudioContext();
-        const now = ctx.currentTime;
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(450 * pitchMultiplier, now);
-        osc.frequency.exponentialRampToValueAtTime(1100 * pitchMultiplier, now + 0.06);
-        osc.frequency.exponentialRampToValueAtTime(300 * pitchMultiplier, now + 0.14);
-        gain.gain.setValueAtTime(0.08, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(now);
-        osc.stop(now + 0.16);
-      } catch (e) {}
-    };
-
-    // ========================================================
-    // 60 FPS WATER RIPPLE ENGINE (PHYSICS-LIKE CONCENTRIC WAVE RINGS)
-    // ========================================================
-    class WaterRippleManager {
-      constructor(canvas) {
-        this.canvas = canvas;
-        this.ctx = canvas.getContext('2d');
-        this.ripples = [];
-        this.resize();
-        window.addEventListener('resize', () => this.resize());
-        this.animate = this.animate.bind(this);
-        requestAnimationFrame(this.animate);
-      }
-
-      resize() {
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
-      }
-
-      addRipple(x, y) {
-        // Multi-ring concentric wave shockwave (emulates water drop)
-        const count = 3;
-        for (let i = 0; i < count; i++) {
-          this.ripples.push({
-            x,
-            y,
-            radius: 8 + i * 4,
-            maxRadius: 110 + i * 25,
-            speed: 3.2 + i * 0.9,
-            alpha: 0.85 - i * 0.15,
-            decay: 0.016 + i * 0.004,
-            lineWidth: 2.8 - i * 0.5,
-            delay: i * 5
-          });
-        }
-      }
-
-      animate() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-        for (let i = this.ripples.length - 1; i >= 0; i--) {
-          const r = this.ripples[i];
-          if (r.delay > 0) {
-            r.delay--;
-            continue;
-          }
-
-          r.radius += r.speed;
-          r.alpha -= r.decay;
-
-          if (r.alpha <= 0 || r.radius >= r.maxRadius) {
-            this.ripples.splice(i, 1);
-            continue;
-          }
-
-          this.ctx.save();
-          this.ctx.beginPath();
-          this.ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
-
-          // Water refraction glow
-          const grad = this.ctx.createRadialGradient(r.x, r.y, Math.max(0, r.radius - 8), r.x, r.y, r.radius + 6);
-          grad.addColorStop(0, `rgba(0, 255, 102, 0)`);
-          grad.addColorStop(0.7, `rgba(0, 255, 102, ${r.alpha * 0.8})`);
-          grad.addColorStop(0.9, `rgba(255, 255, 255, ${r.alpha * 0.95})`);
-          grad.addColorStop(1, `rgba(0, 255, 102, 0)`);
-
-          this.ctx.strokeStyle = grad;
-          this.ctx.lineWidth = r.lineWidth;
-          this.ctx.shadowBlur = 12;
-          this.ctx.shadowColor = '#00ff66';
-          this.ctx.stroke();
-
-          // Inner water specular circle
-          this.ctx.beginPath();
-          this.ctx.arc(r.x, r.y, r.radius * 0.6, 0, Math.PI * 2);
-          this.ctx.strokeStyle = `rgba(255, 255, 255, ${r.alpha * 0.25})`;
-          this.ctx.lineWidth = 1;
-          this.ctx.stroke();
-
-          this.ctx.restore();
-        }
-
-        requestAnimationFrame(this.animate);
-      }
-    }
-
-    // Lucide Icon Component
+    // --- Lucide Icon Helper ---
     const Icon = ({ name, size = 20, className = "" }) => {
       const iconRef = useRef(null);
       useEffect(() => {
@@ -514,68 +407,60 @@
     };
 
     // ========================================================
-    // 1. INTRO SPLASH SCREEN WITH LIQUID GLASS BUTTON
+    // 1. INTRO SPLASH SCREEN (WITH LIQUID GLASS CONTINUE BUTTON)
     // ========================================================
     function IntroSplash({ onContinue }) {
       const [step, setStep] = useState(1);
-      const [isFadingOut, setIsFadingOut] = useState(false);
+      const [animatingOut, setAnimatingOut] = useState(false);
 
       const handleProceed = () => {
-        window.playLiquidDropSound(1.2);
+        window.playGentleTap();
         if (step === 1) {
           setStep(2);
         } else {
-          setIsFadingOut(true);
+          setAnimatingOut(true);
           setTimeout(() => {
             onContinue();
-          }, 550);
+          }, 500);
         }
       };
 
       return (
-        <div className={`fixed inset-0 z-50 bg-[#011307] flex flex-col justify-between px-8 py-12 transition-all duration-700 select-none ${
-          isFadingOut ? 'opacity-0 scale-105 filter blur-md pointer-events-none' : 'opacity-100 scale-100'
+        <div className={`fixed inset-0 z-50 bg-[#040d07]/95 backdrop-blur-2xl flex flex-col justify-between px-8 py-14 transition-all duration-500 select-none ${
+          animatingOut ? 'opacity-0 scale-105 filter blur-sm pointer-events-none' : 'opacity-100 scale-100'
         }`}>
-          {/* Progress Indicators */}
+          {/* Subtle Step Indicator */}
           <div className="flex justify-center pt-2">
-            <div className="flex gap-2.5 p-1.5 rounded-full liquid-glass-card">
-              <span className={`h-2 rounded-full transition-all duration-500 ${step === 1 ? 'w-8 bg-[#00ff66] shadow-[0_0_12px_#00ff66]' : 'w-2 bg-white/20'}`}></span>
-              <span className={`h-2 rounded-full transition-all duration-500 ${step === 2 ? 'w-8 bg-[#00ff66] shadow-[0_0_12px_#00ff66]' : 'w-2 bg-white/20'}`}></span>
+            <div className="flex gap-2">
+              <span className={`h-1.5 rounded-full transition-all duration-300 ${step === 1 ? 'w-6 bg-[#34c759]' : 'w-1.5 bg-white/25'}`}></span>
+              <span className={`h-1.5 rounded-full transition-all duration-300 ${step === 2 ? 'w-6 bg-[#34c759]' : 'w-1.5 bg-white/25'}`}></span>
             </div>
           </div>
 
-          {/* Central Disc Feature */}
-          <div className="flex-1 flex flex-col items-center justify-center my-4">
+          {/* Central Beacon Disc */}
+          <div className="flex-1 flex flex-col items-center justify-center">
             <div className="relative animate-float-disc flex items-center justify-center mb-8">
-              {/* Liquid Ripple Aura Rings */}
-              <div className="absolute w-72 h-72 rounded-full border border-[#00ff66]/30 animate-wave-expand pointer-events-none"></div>
-              <div className="absolute w-80 h-80 rounded-full border border-white/20 animate-wave-expand pointer-events-none" style={{ animationDelay: '1.2s' }}></div>
-
-              {/* 3D Glassmorphic Beacon Disc */}
-              <div className="w-56 h-56 rounded-full p-2.5 liquid-bluetooth-sphere animate-liquid-glow flex items-center justify-center">
-                <div className="w-full h-full rounded-full bg-gradient-to-tr from-white via-[#dcfce7] to-[#15803d] shadow-[inset_0_4px_10px_rgba(255,255,255,0.9),inset_0_-5px_10px_rgba(0,0,0,0.4)] flex items-center justify-center p-6 relative overflow-hidden">
-                  <div className="absolute inset-1 rounded-full border border-emerald-400/60 pointer-events-none"></div>
-                  
-                  {/* Glowing Logo */}
+              <div className="w-52 h-52 rounded-full p-2.5 apple-bluetooth-orb flex items-center justify-center">
+                <div className="w-full h-full rounded-full bg-gradient-to-tr from-white/95 via-[#ecfdf5] to-[#10b981]/30 shadow-[inset_0_3px_6px_rgba(255,255,255,0.9),inset_0_-4px_8px_rgba(0,0,0,0.3)] flex items-center justify-center p-6 relative overflow-hidden">
+                  <div className="absolute inset-1.5 rounded-full border border-emerald-400/40 pointer-events-none"></div>
                   <img 
                     src="logo_black.png" 
                     onError={(e) => {
-                      // Fallback if logo_black.png is not found
                       e.target.onerror = null;
                       e.target.src = "logo.png";
                     }}
                     alt="TrackoVex" 
-                    className="w-32 h-auto object-contain filter contrast-125 drop-shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
+                    className="w-28 h-auto object-contain filter contrast-125 drop-shadow-[0_2px_8px_rgba(0,0,0,0.25)]"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="text-center px-4 max-w-sm">
-              <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
-                {step === 1 ? "Lose your knack for losing things." : "Precision ESP32 Find."}
+            <div className="text-center px-4 max-w-xs">
+              <h1 className="text-3xl font-extrabold text-white tracking-tight leading-snug">
+                {step === 1 ? "Lose your knack for losing things." : "MiniProject III."}
               </h1>
-              <p className="text-sm text-emerald-300/90 mt-2.5 font-medium tracking-wide">
+              <p className="text-xs text-emerald-200/80 mt-2 font-medium tracking-wide">
                 TrackoVex • {APP_CONFIG.tagline}
               </p>
             </div>
@@ -585,11 +470,10 @@
           <div className="w-full flex justify-center pb-2">
             <button 
               onClick={handleProceed}
-              className="w-full max-w-sm py-4 rounded-full liquid-glass-btn text-black text-base font-extrabold tracking-tight flex items-center justify-center gap-2 group"
+              className="w-full max-w-sm py-4 rounded-full apple-primary-glass-btn text-white text-base font-bold tracking-tight shadow-xl flex items-center justify-center gap-2 group"
             >
-              <div className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -skew-x-12 animate-sheen-slide pointer-events-none"></div>
               <span>Continue</span>
-              <Icon name="chevron-right" size={20} className="stroke-[3] transition-transform duration-300 group-hover:translate-x-1" />
+              <Icon name="chevron-right" size={18} className="stroke-[2.5] transition-transform group-hover:translate-x-0.5" />
             </button>
           </div>
         </div>
@@ -597,7 +481,7 @@
     }
 
     // ==========================================
-    // 2. CANVAS RADAR RING (NEON GREEN 60 FPS)
+    // 2. CANVAS RADAR RING (MINIMAL APPLE GREEN)
     // ==========================================
     function ParticleRadarRing() {
       const canvasRef = useRef(null);
@@ -608,7 +492,7 @@
         const ctx = canvas.getContext('2d');
         let animationFrameId;
 
-        const size = Math.min(window.innerWidth * 0.85, 340);
+        const size = Math.min(window.innerWidth * 0.85, 330);
         canvas.width = size;
         canvas.height = size;
 
@@ -616,61 +500,43 @@
         const centerY = size / 2;
         const baseRadius = size * 0.38;
 
-        const particleCount = 130;
+        const particleCount = 100;
         const particles = Array.from({ length: particleCount }).map(() => ({
           angle: Math.random() * Math.PI * 2,
-          radiusOffset: (Math.random() - 0.5) * 44,
-          speed: 0.007 + Math.random() * 0.014,
-          baseSize: 1.8 + Math.random() * 3.4,
-          alpha: 0.25 + Math.random() * 0.75,
-          pulseSpeed: 0.02 + Math.random() * 0.04
+          radiusOffset: (Math.random() - 0.5) * 40,
+          speed: 0.005 + Math.random() * 0.010,
+          baseSize: 1.6 + Math.random() * 2.4,
+          alpha: 0.2 + Math.random() * 0.75,
+          pulseSpeed: 0.02 + Math.random() * 0.03
         }));
-
-        let sweepAngle = 0;
 
         const render = () => {
           ctx.clearRect(0, 0, size, size);
 
-          // Subtle Radar Sweep Beam
-          sweepAngle += 0.035;
-          ctx.save();
-          ctx.translate(centerX, centerY);
-          ctx.rotate(sweepAngle);
-          const sweepGrad = ctx.createRadialGradient(0, 0, 10, 0, 0, baseRadius + 30);
-          sweepGrad.addColorStop(0, 'rgba(0, 255, 102, 0.25)');
-          sweepGrad.addColorStop(1, 'rgba(0, 255, 102, 0)');
-          ctx.fillStyle = sweepGrad;
-          ctx.beginPath();
-          ctx.moveTo(0, 0);
-          ctx.arc(0, 0, baseRadius + 25, 0, 0.45);
-          ctx.closePath();
-          ctx.fill();
-          ctx.restore();
-
-          // Concentric Glass Circles
-          [0.35, 0.65, 1].forEach((factor, idx) => {
+          // Subtle minimal glass rings
+          [0.38, 0.7, 1.0].forEach((scale, i) => {
             ctx.beginPath();
-            ctx.arc(centerX, centerY, baseRadius * factor, 0, Math.PI * 2);
-            ctx.strokeStyle = idx === 2 ? 'rgba(0, 255, 102, 0.45)' : 'rgba(255, 255, 255, 0.15)';
-            ctx.lineWidth = idx === 2 ? 2 : 1;
+            ctx.arc(centerX, centerY, baseRadius * scale, 0, Math.PI * 2);
+            ctx.strokeStyle = i === 2 ? 'rgba(52, 199, 89, 0.35)' : 'rgba(255, 255, 255, 0.12)';
+            ctx.lineWidth = 1;
             ctx.stroke();
           });
 
-          // Particles
+          // Soft particles
           particles.forEach(p => {
             p.angle += p.speed;
-            p.alpha += Math.sin(Date.now() * 0.003 * p.pulseSpeed) * 0.02;
-            const currentAlpha = Math.max(0.2, Math.min(0.95, p.alpha));
+            p.alpha += Math.sin(Date.now() * 0.003 * p.pulseSpeed) * 0.015;
+            const currentAlpha = Math.max(0.15, Math.min(0.85, p.alpha));
 
-            const currentR = baseRadius + p.radiusOffset + Math.sin(p.angle * 3) * 6;
+            const currentR = baseRadius + p.radiusOffset + Math.sin(p.angle * 3) * 5;
             const x = centerX + Math.cos(p.angle) * currentR;
             const y = centerY + Math.sin(p.angle) * currentR;
 
             ctx.beginPath();
             ctx.arc(x, y, p.baseSize, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(0, 255, 102, ${currentAlpha})`;
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = "#00ff66";
+            ctx.fillStyle = `rgba(52, 199, 89, ${currentAlpha})`;
+            ctx.shadowBlur = 6;
+            ctx.shadowColor = "#34c759";
             ctx.fill();
           });
 
@@ -695,29 +561,29 @@
       return (
         <div className="relative flex flex-col items-center justify-center my-6">
           <div className="relative w-64 h-64 flex items-center justify-center">
-            {/* Liquid Glowing Arc */}
+            {/* Subtle Arc */}
             <svg className="absolute w-56 h-56 pointer-events-none" viewBox="0 0 100 100">
               <path 
                 d="M 50,15 A 35,35 0 0,1 85,50" 
                 fill="none" 
-                stroke="rgba(0, 255, 102, 0.6)" 
-                strokeWidth="5" 
+                stroke="rgba(52, 199, 89, 0.4)" 
+                strokeWidth="4" 
                 strokeLinecap="round" 
               />
-              <circle cx="50" cy="15" r="4" fill="rgba(255, 255, 255, 0.85)" />
-              <circle cx="85" cy="50" r="4.5" fill="#00ff66" />
+              <circle cx="50" cy="15" r="3" fill="rgba(255, 255, 255, 0.7)" />
+              <circle cx="85" cy="50" r="3.5" fill="#34c759" />
             </svg>
 
-            {/* Directional 3D Arrow */}
+            {/* Direction Arrow */}
             <div 
-              className="relative transition-transform duration-500 ease-out filter drop-shadow-[0_0_25px_rgba(0,255,102,0.6)]"
+              className="relative transition-transform duration-500 ease-out filter drop-shadow-[0_0_16px_rgba(52,199,89,0.45)]"
               style={{ transform: `rotate(${angle}deg)` }}
             >
-              <svg width="140" height="140" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg width="135" height="135" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path 
                   d="M 28,72 L 68,32 M 68,32 L 38,32 M 68,32 L 68,62" 
-                  stroke="#00ff66" 
-                  strokeWidth="14" 
+                  stroke="#34c759" 
+                  strokeWidth="12" 
                   strokeLinecap="round" 
                   strokeLinejoin="round" 
                 />
@@ -728,114 +594,110 @@
       );
     }
 
-    // ========================================================
+    // ==========================================
     // 4. MAIN APPLICATION COMPONENT
-    // ========================================================
+    // ==========================================
     function TrackoVexApp() {
-      // Views: 'home' | 'tracking' | 'pairing' | 'settings'
+      // Views: 'home' | 'tracking'
       const [currentView, setCurrentView] = useState('home');
       const [showIntro, setShowIntro] = useState(true);
 
-      // Devices & Active Selection
+      // Devices
       const [devices, setDevices] = useState([
         {
           id: "ESP32-9021",
           name: "Car Keys",
           battery: 94,
-          rawName: "ESP32_TrackoVex_Alpha",
-          pairedTime: "10:24 AM",
+          rawName: "ESP32_TrackoVex_1",
           rssi: "-48 dBm"
         }
       ]);
       const [activeDeviceId, setActiveDeviceId] = useState("ESP32-9021");
 
-      // Tracking State
-      const [searchState, setSearchState] = useState("found"); // "searching" | "found"
+      // Tracking Readout
+      const [searchState, setSearchState] = useState("searching");
       const [distanceVal, setDistanceVal] = useState(7);
       const [directionLabel, setDirectionLabel] = useState("to your right");
-      const [arrowAngle, setArrowAngle] = useState(38);
+      const [arrowAngle, setArrowAngle] = useState(0);
       const [isBuzzerSounding, setIsBuzzerSounding] = useState(false);
-      const [distanceUnit, setDistanceUnit] = useState("ft"); // "ft" or "m"
 
-      // Bluetooth Pairing State
+      // BLE Scanner
       const [isScanningBLE, setIsScanningBLE] = useState(false);
-      const [bleStatus, setBleStatus] = useState("idle"); // "idle" | "scanning" | "discovered"
+      const [bleStatus, setBleStatus] = useState("idle");
       const [discoveredESP, setDiscoveredESP] = useState(null);
 
-      // Multi-device Switcher Drawer
+      // Modals & Drawers
       const [showDeviceDrawer, setShowDeviceDrawer] = useState(false);
-
-      // Rename Modal State
+      const [showSettingsModal, setShowSettingsModal] = useState(false);
       const [isRenaming, setIsRenaming] = useState(false);
       const [renameInput, setRenameInput] = useState("");
 
-      // Settings Feedback Form State
+      // Settings Feedback Form
       const [feedbackRating, setFeedbackRating] = useState(5);
-      const [feedbackCategory, setFeedbackCategory] = useState("General Feedback");
+      const [feedbackCategory, setFeedbackCategory] = useState("General UI");
       const [feedbackComment, setFeedbackComment] = useState("");
-      const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+      const [feedbackSent, setFeedbackSent] = useState(false);
 
-      // General Preferences (Toggles in Settings)
+      // Settings Preferences
       const [hapticEnabled, setHapticEnabled] = useState(true);
-      const [autoReconnect, setAutoReconnect] = useState(true);
+      const [distanceUnit, setDistanceUnit] = useState("ft");
 
-      // Toast Notification State
+      // Gentle Liquid Touches (Soft diffusion droplet)
+      const [gentleTouches, setGentleTouches] = useState([]);
+
+      // Toast Notification
       const [toastMsg, setToastMsg] = useState(null);
 
-      // Active Dock Tab ('home' | 'pair' | 'settings')
-      const [dockActiveTab, setDockActiveTab] = useState('home');
+      // Dock Active Option (Index: 0=Add, 1=Rename, 2=Settings)
+      const [activeDockTab, setActiveDockTab] = useState(0);
 
       const notify = (msg) => {
         setToastMsg(msg);
-        setTimeout(() => setToastMsg(null), 3200);
+        setTimeout(() => setToastMsg(null), 3000);
       };
 
-      // Initialize Water Ripple Touch Listener
-      const rippleManagerRef = useRef(null);
-      useEffect(() => {
-        const canvas = document.getElementById('water-ripple-canvas');
-        if (canvas) {
-          rippleManagerRef.current = new WaterRippleManager(canvas);
-        }
-      }, []);
-
+      // Gentle Touch Interaction
       const handleGlobalClick = (e) => {
-        if (rippleManagerRef.current) {
-          rippleManagerRef.current.addRipple(e.clientX, e.clientY);
-        }
+        const x = e.clientX;
+        const y = e.clientY;
+        const id = Date.now() + Math.random();
+        setGentleTouches(prev => [...prev.slice(-3), { id, x, y }]);
+        setTimeout(() => {
+          setGentleTouches(prev => prev.filter(t => t.id !== id));
+        }, 850);
       };
 
       const currentDevice = useMemo(() => {
         return devices.find(d => d.id === activeDeviceId) || devices[0] || null;
       }, [devices, activeDeviceId]);
 
-      // Sound the Buzzer
+      // Sound ESP32 Buzzer
       const handleTriggerBuzzer = () => {
+        window.playGentleTap();
         setIsBuzzerSounding(true);
         window.triggerESP32BuzzerAlarm();
-        notify(`🚨 Buzzer Sounding on ${currentDevice?.name || "TrackoVex"}!`);
-        setTimeout(() => setIsBuzzerSounding(false), 2400);
+        notify(`Buzzer Sounding on ${currentDevice?.name || "TrackoVex"}!`);
+        setTimeout(() => setIsBuzzerSounding(false), 2200);
       };
 
-      // Live Tracking Simulation
+      // Live Tracking Interval
       useEffect(() => {
-        if (!currentDevice || currentView !== 'tracking') return;
+        if (!currentDevice) return;
         const interval = setInterval(() => {
           if (searchState === "found") {
             setDistanceVal(prev => {
               const delta = (Math.random() * 2 - 1);
               return Math.max(1, Math.round(prev + delta));
             });
-            setArrowAngle(prev => (prev + (Math.random() * 12 - 6)));
+            setArrowAngle(prev => (prev + (Math.random() * 10 - 5)));
           }
-        }, 1700);
+        }, 1600);
         return () => clearInterval(interval);
-      }, [currentDevice, searchState, currentView]);
+      }, [currentDevice, searchState]);
 
-      // BLE Scanner Simulation
+      // Start BLE Scan
       const startBLEScan = async () => {
-        window.playLiquidDropSound(1.3);
-        setCurrentView('pairing');
+        window.playGentleTap();
         setIsScanningBLE(true);
         setBleStatus("scanning");
 
@@ -849,15 +711,13 @@
               setDiscoveredESP({
                 id: dev.id || `ESP32-${Math.floor(1000 + Math.random() * 9000)}`,
                 rawName: dev.name || `ESP32_TrackoVex_${devices.length + 1}`,
-                rssi: "-46 dBm",
+                rssi: "-48 dBm",
                 battery: 98
               });
               setBleStatus("discovered");
               return;
             }
-          } catch (e) {
-            console.log("Web Bluetooth fallback:", e);
-          }
+          } catch (e) {}
         }
 
         setTimeout(() => {
@@ -866,16 +726,16 @@
             id: `ESP32-${Math.floor(1000 + Math.random() * 9000)}`,
             rawName: `ESP32_TrackoVex_Unit_${count}`,
             rssi: "-48 dBm",
-            battery: count === 1 ? 94 : (count === 2 ? 88 : 76)
+            battery: count === 1 ? 94 : 85
           });
           setBleStatus("discovered");
-        }, 1800);
+        }, 1600);
       };
 
       const confirmPairDevice = () => {
-        window.playLiquidDropSound(1.5);
+        window.playGentleTap();
         if (!discoveredESP) return;
-        const defaultNames = ["Camera Bag", "Car Keys", "MacBook Sleeve", "Suitcase", "Wallet"];
+        const defaultNames = ["Camera", "Car Keys", "MacBook Sleeve", "Backpack"];
         const nameToUse = defaultNames[devices.length % defaultNames.length];
         
         const newDevice = {
@@ -883,25 +743,27 @@
           name: nameToUse,
           battery: discoveredESP.battery || 100,
           rawName: discoveredESP.rawName,
-          pairedTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           rssi: discoveredESP.rssi
         };
 
         const updated = [...devices, newDevice];
         setDevices(updated);
         setActiveDeviceId(newDevice.id);
+        setSearchState("searching");
         setIsScanningBLE(false);
         setDiscoveredESP(null);
         setBleStatus("idle");
-        
-        // Return to home or enter tracking
-        setCurrentView('home');
-        setDockActiveTab('home');
         notify(`Paired "${newDevice.name}" successfully!`);
+
+        setTimeout(() => {
+          setSearchState("found");
+          setDistanceVal(Math.floor(4 + Math.random() * 7));
+          notify(`Signal locked on ${newDevice.name}!`);
+        }, 2500);
       };
 
       const openRename = (dev) => {
-        window.playLiquidDropSound();
+        window.playGentleTap();
         if (!dev) {
           notify("No active device to rename!");
           return;
@@ -911,7 +773,7 @@
       };
 
       const saveRename = () => {
-        window.playLiquidDropSound(1.2);
+        window.playGentleTap();
         if (!renameInput.trim() || !currentDevice) return;
         const clean = renameInput.trim();
         setDevices(prev => prev.map(d => d.id === currentDevice.id ? { ...d, name: clean } : d));
@@ -919,795 +781,563 @@
         notify(`Renamed to "${clean}"`);
       };
 
-      const handleUnpair = (deviceId) => {
-        window.playLiquidDropSound(0.8);
-        const targetId = deviceId || currentDevice?.id;
-        const target = devices.find(d => d.id === targetId);
-        const remaining = devices.filter(d => d.id !== targetId);
+      const handleUnpair = () => {
+        window.playGentleTap();
+        if (!currentDevice) return;
+        const remaining = devices.filter(d => d.id !== currentDevice.id);
         setDevices(remaining);
         setActiveDeviceId(remaining[0]?.id || null);
-        if (currentView === 'tracking') {
-          setCurrentView('home');
-        }
-        notify(`Removed "${target?.name || 'Device'}"`);
+        notify(`Removed "${currentDevice.name}"`);
       };
 
       const handleFeedbackSubmit = (e) => {
         e.preventDefault();
-        window.playLiquidDropSound(1.6);
-        setFeedbackSubmitted(true);
-        notify("Thank you! Feedback received by engineering team.");
+        window.playGentleTap();
+        setFeedbackSent(true);
+        notify("Thank you! Feedback received.");
         setTimeout(() => {
           setFeedbackComment("");
-          setFeedbackSubmitted(false);
-        }, 3000);
+          setFeedbackSent(false);
+        }, 2800);
       };
+
+      // Fallback ambient fluid canvas if background video fails
+      useEffect(() => {
+        const canvas = document.getElementById('fallback-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        let step = 0;
+        let id;
+        const draw = () => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          step += 0.005;
+          const grad = ctx.createRadialGradient(
+            canvas.width * 0.5 + Math.sin(step) * 120,
+            canvas.height * 0.35 + Math.cos(step * 0.8) * 80,
+            40,
+            canvas.width * 0.5,
+            canvas.height * 0.5,
+            canvas.width * 0.7
+          );
+          grad.addColorStop(0, 'rgba(52, 199, 89, 0.25)');
+          grad.addColorStop(0.5, 'rgba(16, 75, 36, 0.18)');
+          grad.addColorStop(1, 'rgba(3, 13, 6, 0)');
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          id = requestAnimationFrame(draw);
+        };
+        draw();
+        return () => cancelAnimationFrame(id);
+      }, []);
+
+      // Check whether dock should be shown:
+      // USER RULE: "it only present at the homepage not at the pairing, tracking and other pages rather than the homepage"
+      const isDockVisible = currentView === 'home' && !isScanningBLE && !showSettingsModal && !isRenaming && !showDeviceDrawer && !showIntro;
 
       return (
         <div 
           onClick={handleGlobalClick}
           className="relative w-screen h-screen flex flex-col overflow-hidden select-none font-sans"
         >
-          {/* Intro Splash Page */}
+          {/* GENTLE LIQUID TOUCH ANIMATIONS */}
+          {gentleTouches.map(t => (
+            <div 
+              key={t.id} 
+              className="gentle-liquid-touch animate-gentle-bloom" 
+              style={{ top: t.y, left: t.x }}
+            />
+          ))}
+
+          {/* Intro Splash Screen */}
           {showIntro && (
-            <IntroSplash onContinue={() => {
-              setShowIntro(false);
-              setCurrentView('home');
-            }} />
+            <IntroSplash onContinue={() => setShowIntro(false)} />
           )}
 
-          {/* Floating Global Toast Notification */}
+          {/* Minimal Toast Notification */}
           {toastMsg && (
             <div className="fixed top-6 inset-x-6 z-50 flex items-center justify-center pointer-events-none">
-              <div className="px-5 py-3 rounded-full liquid-glass-panel text-[#00ff66] text-xs font-bold flex items-center gap-2.5 shadow-[0_10px_35px_rgba(0,0,0,0.8)] border border-[#00ff66]/50 animate-bounce">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#00ff66] shadow-[0_0_10px_#00ff66] animate-ping"></span>
-                <span>{toastMsg}</span>
+              <div className="px-5 py-2.5 rounded-full apple-glass-btn text-[#34c759] text-xs font-semibold flex items-center gap-2 shadow-xl border border-white/30">
+                <span className="w-2 h-2 rounded-full bg-[#34c759]"></span>
+                <span className="text-white">{toastMsg}</span>
               </div>
             </div>
           )}
 
           {/* ========================================================
-              TOP APP HEADER BAR (Contextual depending on active view)
+              TOP HEADER BAR (UNTOUCHED ORIGINAL INTERFACE)
               ======================================================== */}
-          <header className="w-full pt-12 px-6 pb-3 flex items-center justify-between z-30">
-            {currentView === 'home' && (
-              <>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl liquid-glass-card flex items-center justify-center text-[#00ff66] shadow-md">
-                    <Icon name="radar" size={22} />
-                  </div>
-                  <div>
-                    <h1 className="text-xl font-extrabold tracking-tight text-white">{APP_CONFIG.appName}</h1>
-                    <p className="text-[11px] text-emerald-300 font-medium">Precision BLE & UWB</p>
-                  </div>
+          <div className="w-full pt-12 px-6 pb-3 flex items-start justify-between z-20">
+            <div className="flex items-center gap-3">
+              <div className="flex flex-col">
+                <div className="text-[10px] font-extrabold uppercase tracking-widest text-[#34c759] font-sans">
+                  {currentDevice ? (searchState === "searching" ? "FINDING" : "NEARBY") : "TRACKOVEX"}
                 </div>
 
-                <div className="flex items-center gap-2">
-                  {devices.length > 0 && (
-                    <button 
-                      onClick={(e) => { e.stopPropagation(); setShowDeviceDrawer(true); }}
-                      className="px-3.5 py-1.5 rounded-full liquid-secondary-btn text-xs font-bold text-emerald-300 flex items-center gap-1.5"
-                    >
-                      <Icon name="layers" size={14} className="text-[#00ff66]" />
-                      <span>{devices.length} Beacon{devices.length > 1 ? 's' : ''}</span>
-                    </button>
-                  )}
-                </div>
-              </>
-            )}
-
-            {currentView === 'tracking' && (
-              <>
-                <div className="flex items-center gap-3">
-                  <button 
-                    onClick={() => {
-                      window.playLiquidDropSound();
-                      setCurrentView('home');
-                    }}
-                    className="w-10 h-10 rounded-full liquid-secondary-btn flex items-center justify-center text-white"
-                    title="Back to Home"
-                  >
-                    <Icon name="chevron-left" size={22} className="stroke-[2.5]" />
-                  </button>
-                  <div>
-                    <div className="text-[10px] font-extrabold uppercase tracking-widest text-[#00ff66]">
-                      {searchState === "searching" ? "SEARCHING RADAR" : "PRECISION LOCK"}
-                    </div>
-                    <h2 className="text-xl font-extrabold tracking-tight text-white truncate max-w-[180px]">
-                      {currentDevice?.name}
-                    </h2>
-                  </div>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white font-sans truncate max-w-[180px] sm:max-w-xs">
+                    {currentDevice ? currentDevice.name : "No Beacon Paired"}
+                  </h1>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      window.playLiquidDropSound();
-                      setSearchState(prev => prev === 'searching' ? 'found' : 'searching');
-                    }}
-                    className="px-3.5 py-2 rounded-full liquid-secondary-btn text-[11px] font-bold text-emerald-200 border border-[#00ff66]/40"
-                  >
-                    {searchState === 'searching' ? "View Arrow" : "View Radar"}
-                  </button>
-                </div>
-              </>
-            )}
-
-            {currentView === 'pairing' && (
-              <>
-                <div className="flex items-center gap-3">
-                  <button 
-                    onClick={() => {
-                      window.playLiquidDropSound();
-                      setCurrentView('home');
-                    }}
-                    className="w-10 h-10 rounded-full liquid-secondary-btn flex items-center justify-center text-white"
-                  >
-                    <Icon name="chevron-left" size={22} className="stroke-[2.5]" />
-                  </button>
-                  <div>
-                    <h2 className="text-xl font-extrabold text-white">Pair New Beacon</h2>
-                    <p className="text-[11px] text-emerald-300">ESP32 Ultra-Wideband BLE</p>
-                  </div>
-                </div>
-              </>
-            )}
-
-            {currentView === 'settings' && (
-              <>
-                <div className="flex items-center gap-3">
-                  <button 
-                    onClick={() => {
-                      window.playLiquidDropSound();
-                      setCurrentView('home');
-                    }}
-                    className="w-10 h-10 rounded-full liquid-secondary-btn flex items-center justify-center text-white"
-                  >
-                    <Icon name="chevron-left" size={22} className="stroke-[2.5]" />
-                  </button>
-                  <div>
-                    <h2 className="text-xl font-extrabold text-white">Liquid Settings</h2>
-                    <p className="text-[11px] text-emerald-300">Configure & Support</p>
-                  </div>
-                </div>
-              </>
-            )}
-          </header>
-
-          {/* ========================================================
-              VIEW 1: HOMEPAGE (DOCK IS PRESENT HERE!)
-              ======================================================== */}
-          {currentView === 'home' && (
-            <main className="flex-1 w-full px-6 pt-2 pb-28 overflow-y-auto page-view-enter z-20 flex flex-col justify-between">
-              
-              {/* If NO devices are paired yet */}
-              {devices.length === 0 ? (
-                <div className="flex-1 flex flex-col items-center justify-center text-center p-4">
-                  {/* CENTRAL LIQUID GLASS BLUETOOTH LOGO ORB */}
-                  <div className="relative mb-8 flex items-center justify-center">
-                    <div className="absolute w-52 h-52 rounded-full border border-[#00ff66]/30 animate-wave-expand pointer-events-none"></div>
-                    <div className="absolute w-64 h-64 rounded-full border border-white/20 animate-wave-expand pointer-events-none" style={{ animationDelay: '1.2s' }}></div>
-
-                    <div className="w-36 h-36 rounded-full liquid-bluetooth-sphere animate-liquid-glow flex items-center justify-center p-3">
-                      <div className="w-full h-full rounded-full liquid-glass-panel flex items-center justify-center text-[#00ff66]">
-                        <Icon name="bluetooth" size={48} className="stroke-[2.2] animate-pulse" />
+                {currentDevice && (
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <div className="relative flex items-center">
+                      <div className="w-5 h-2.5 rounded-[3px] border border-[#34c759] p-[1px] flex items-center">
+                        <div 
+                          className={`h-full rounded-[1px] transition-all duration-500 ${
+                            currentDevice.battery > 20 ? 'bg-[#34c759]' : 'bg-[#ff453a]'
+                          }`}
+                          style={{ width: `${currentDevice.battery}%` }}
+                        ></div>
                       </div>
+                      <div className="w-[2px] h-[4px] bg-[#34c759] rounded-r-[1px] ml-[1px]"></div>
                     </div>
+                    <span className="text-[10px] font-bold text-emerald-300 font-mono">
+                      {currentDevice.battery}%
+                    </span>
+                    <span className="text-[9px] text-emerald-300/70 ml-1">• ESP32 UWB</span>
                   </div>
+                )}
+              </div>
+            </div>
 
-                  <h3 className="text-2xl font-extrabold text-white">No TrackoVex Beacon Connected</h3>
-                  <p className="text-xs text-emerald-200/80 max-w-xs mt-2 leading-relaxed">
-                    Power on your ESP32 hardware beacon and tap the pair button to establish an ultra-wideband link.
-                  </p>
-
-                  <button 
-                    onClick={startBLEScan}
-                    className="mt-6 px-8 py-3.5 rounded-full liquid-glass-btn text-black text-sm font-extrabold shadow-2xl active:scale-95 transition-all"
-                  >
-                    Scan for Devices
-                  </button>
-                </div>
-              ) : (
-                <div className="space-y-5">
-                  {/* ACTIVE BEACON HERO CARD */}
-                  <div className="liquid-glass-panel rounded-[32px] p-6 shadow-2xl space-y-4 specular-gloss">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-3.5">
-                        <div className="w-14 h-14 rounded-2xl liquid-glass-card flex items-center justify-center text-[#00ff66] shadow-lg">
-                          <Icon name="radio" size={26} className="animate-pulse" />
-                        </div>
-                        <div>
-                          <div className="text-[10px] font-extrabold tracking-wider uppercase text-[#00ff66]">Primary Beacon</div>
-                          <h3 className="text-2xl font-black text-white tracking-tight">{currentDevice.name}</h3>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="w-2 h-2 rounded-full bg-[#00ff66] shadow-[0_0_8px_#00ff66]"></span>
-                            <span className="text-[11px] font-mono text-emerald-200">Connected ({currentDevice.rssi || '-48 dBm'})</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Quick rename button */}
-                      <button 
-                        onClick={() => openRename(currentDevice)}
-                        className="w-9 h-9 rounded-full liquid-secondary-btn flex items-center justify-center text-emerald-200 hover:text-white"
-                        title="Rename Beacon"
-                      >
-                        <Icon name="edit-3" size={16} />
-                      </button>
-                    </div>
-
-                    {/* Battery & Telemetry Pills */}
-                    <div className="grid grid-cols-2 gap-3 pt-2">
-                      <div className="p-3.5 rounded-2xl liquid-glass-card flex items-center justify-between">
-                        <span className="text-xs font-semibold text-emerald-200">Battery Life</span>
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-sm font-bold font-mono text-white">{currentDevice.battery}%</span>
-                          <Icon name="battery-charging" size={16} className="text-[#00ff66]" />
-                        </div>
-                      </div>
-
-                      <div className="p-3.5 rounded-2xl liquid-glass-card flex items-center justify-between">
-                        <span className="text-xs font-semibold text-emerald-200">Hardware</span>
-                        <span className="text-xs font-bold text-white">ESP32 UWB</span>
-                      </div>
-                    </div>
-
-                    {/* Action Triggers */}
-                    <div className="flex items-center gap-3 pt-1">
-                      {/* START TRACKING BUTTON (Enters Tracking View - Dock disappears) */}
-                      <button 
-                        onClick={() => {
-                          window.playLiquidDropSound(1.2);
-                          setCurrentView('tracking');
-                        }}
-                        className="flex-1 py-4 rounded-2xl liquid-glass-btn text-black font-extrabold text-sm flex items-center justify-center gap-2 shadow-xl"
-                      >
-                        <Icon name="navigation" size={18} className="stroke-[2.5]" />
-                        <span>Find & Track Now</span>
-                      </button>
-
-                      {/* Buzzer Button */}
-                      <button 
-                        onClick={handleTriggerBuzzer}
-                        className={`w-14 h-14 rounded-2xl liquid-circle-btn flex items-center justify-center ${
-                          isBuzzerSounding ? 'liquid-circle-buzzer-active animate-buzzer-ping' : ''
-                        }`}
-                        title="Ring Buzzer"
-                      >
-                        <Icon 
-                          name={isBuzzerSounding ? "bell-ring" : "volume-2"} 
-                          size={22} 
-                          className={isBuzzerSounding ? "text-rose-200" : "text-[#00ff66]"} 
-                        />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* ALL REGISTERED DEVICES LIST */}
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between px-2">
-                      <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-300">Your Beacons</span>
-                      <button 
-                        onClick={startBLEScan}
-                        className="text-xs font-bold text-[#00ff66] flex items-center gap-1 hover:underline"
-                      >
-                        <Icon name="plus" size={14} />
-                        <span>Add New</span>
-                      </button>
-                    </div>
-
-                    <div className="space-y-2.5">
-                      {devices.map(dev => {
-                        const isCurrent = dev.id === currentDevice.id;
-                        return (
-                          <div 
-                            key={dev.id}
-                            onClick={() => {
-                              window.playLiquidDropSound();
-                              setActiveDeviceId(dev.id);
-                            }}
-                            className={`p-4 rounded-2xl liquid-glass-card flex items-center justify-between cursor-pointer transition-all ${
-                              isCurrent ? 'border-[#00ff66] shadow-[0_0_20px_rgba(0,255,102,0.3)] bg-[#00ff66]/15' : 'hover:bg-white/10'
-                            }`}
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                                isCurrent ? 'bg-[#00ff66] text-black font-bold' : 'bg-white/15 text-white'
-                              }`}>
-                                <Icon name="radio" size={18} />
-                              </div>
-                              <div>
-                                <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                                  <span>{dev.name}</span>
-                                  {isCurrent && <span className="w-2 h-2 rounded-full bg-[#00ff66] shadow-[0_0_8px_#00ff66]"></span>}
-                                </h4>
-                                <span className="text-[11px] font-mono text-emerald-300/80">Battery: {dev.battery}% • Last seen just now</span>
-                              </div>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                              <button 
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleUnpair(dev.id);
-                                }}
-                                className="w-8 h-8 rounded-full bg-white/10 hover:bg-rose-500/30 text-rose-300 flex items-center justify-center transition-all"
-                                title="Delete beacon"
-                              >
-                                <Icon name="trash-2" size={14} />
-                              </button>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
+            {/* UPPER RADAR / ARROW TOGGLE */}
+            <div className="flex items-center gap-2 pt-1">
+              {currentDevice && (
+                <button 
+                  onClick={(e) => { 
+                    e.stopPropagation(); 
+                    window.playGentleTap();
+                    setSearchState(prev => prev === 'searching' ? 'found' : 'searching'); 
+                  }}
+                  className="px-3.5 py-2 rounded-full apple-glass-btn text-[11px] font-semibold text-emerald-200 border border-white/20"
+                >
+                  {searchState === 'searching' ? "View Arrow" : "View Radar"}
+                </button>
               )}
 
-            </main>
-          )}
-
-          {/* ========================================================
-              VIEW 2: TRACKING VIEW (NO DOCK HERE - REMOVED AS REQUESTED)
-              ======================================================== */}
-          {currentView === 'tracking' && currentDevice && (
-            <div className="flex-1 w-full flex flex-col justify-between px-6 pb-12 page-view-enter z-20">
-              
-              {/* Central Radar or Arrow Canvas */}
-              <div className="flex-1 flex flex-col items-center justify-center relative">
-                {searchState === "searching" ? (
-                  <ParticleRadarRing />
-                ) : (
-                  <DirectionArrowView angle={arrowAngle} />
-                )}
-              </div>
-
-              {/* Bottom Precision Readout */}
-              <div className="w-full liquid-glass-panel rounded-[32px] p-6 space-y-4 specular-gloss shadow-2xl">
-                <div className="flex items-baseline justify-between">
-                  <div>
-                    <div className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-300">Estimated Distance</div>
-                    <div className="flex items-baseline gap-2 mt-0.5">
-                      <span className="text-5xl font-black text-white font-sans">
-                        {searchState === "searching" ? "--" : distanceVal}
-                      </span>
-                      <span className="text-3xl font-light text-[#00ff66] font-sans">
-                        {distanceUnit}
-                      </span>
-                    </div>
-                    {searchState === "found" && (
-                      <div className="text-lg font-medium text-emerald-200 mt-1">
-                        Bearing: <span className="text-[#00ff66] font-bold">{directionLabel}</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Toggle Units (ft/m) */}
-                  <button 
-                    onClick={() => {
-                      window.playLiquidDropSound();
-                      setDistanceUnit(u => u === 'ft' ? 'm' : 'ft');
-                    }}
-                    className="px-3 py-1.5 rounded-full liquid-secondary-btn text-xs font-mono font-bold text-[#00ff66]"
-                  >
-                    Unit: {distanceUnit.toUpperCase()}
-                  </button>
-                </div>
-
-                {/* Bottom Actions inside Tracking Screen */}
-                <div className="flex items-center justify-between pt-2">
-                  <button 
-                    onClick={() => {
-                      window.playLiquidDropSound();
-                      setCurrentView('home');
-                    }}
-                    className="px-5 py-3 rounded-2xl liquid-secondary-btn text-xs font-bold text-white flex items-center gap-2"
-                  >
-                    <Icon name="arrow-left" size={16} />
-                    <span>Exit Tracking</span>
-                  </button>
-
-                  <button 
-                    onClick={handleTriggerBuzzer}
-                    className={`px-5 py-3 rounded-2xl liquid-circle-btn flex items-center gap-2 font-bold text-xs ${
-                      isBuzzerSounding ? 'liquid-circle-buzzer-active animate-buzzer-ping text-rose-200' : 'text-[#00ff66]'
-                    }`}
-                  >
-                    <Icon name={isBuzzerSounding ? "bell-ring" : "volume-2"} size={18} />
-                    <span>{isBuzzerSounding ? "Sounding..." : "Ring Buzzer"}</span>
-                  </button>
-                </div>
-              </div>
-
-            </div>
-          )}
-
-          {/* ========================================================
-              VIEW 3: PAIRING VIEW (NO DOCK HERE - REMOVED AS REQUESTED)
-              ======================================================== */}
-          {currentView === 'pairing' && (
-            <div className="flex-1 w-full px-6 py-4 flex flex-col justify-between page-view-enter z-20">
-              <div className="flex-1 flex flex-col items-center justify-center text-center">
-                
-                {bleStatus === "scanning" && (
-                  <div className="space-y-6">
-                    {/* Glowing Liquid Sphere with Wave shockwaves */}
-                    <div className="relative flex items-center justify-center">
-                      <div className="absolute w-48 h-48 rounded-full border border-[#00ff66]/30 animate-wave-expand pointer-events-none"></div>
-                      <div className="absolute w-60 h-60 rounded-full border border-white/20 animate-wave-expand pointer-events-none" style={{ animationDelay: '1s' }}></div>
-
-                      <div className="w-32 h-32 rounded-full liquid-bluetooth-sphere animate-liquid-glow flex items-center justify-center">
-                        <Icon name="bluetooth-searching" size={44} className="text-white animate-spin" />
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="text-2xl font-extrabold text-white">Scanning for ESP32 Signals</h3>
-                      <p className="text-xs text-emerald-200/80 mt-2 max-w-xs">
-                        Keep your beacon within 5 meters. Make sure BLE advertisement is powered ON.
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {bleStatus === "discovered" && discoveredESP && (
-                  <div className="w-full max-w-sm liquid-glass-panel rounded-[32px] p-6 space-y-5 specular-gloss">
-                    <div className="w-20 h-20 rounded-full liquid-bluetooth-sphere mx-auto flex items-center justify-center">
-                      <Icon name="check" size={34} className="text-white stroke-[3]" />
-                    </div>
-
-                    <div className="text-center">
-                      <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#00ff66]">Beacon Discovered</span>
-                      <h3 className="text-2xl font-black text-white mt-1">{discoveredESP.rawName}</h3>
-                      <p className="text-xs font-mono text-emerald-300 mt-1">RSSI: {discoveredESP.rssi} • Battery: {discoveredESP.battery}%</p>
-                    </div>
-
-                    <div className="p-4 rounded-2xl liquid-glass-card space-y-2 text-left">
-                      <div className="flex justify-between text-xs">
-                        <span className="text-emerald-200">Protocol:</span>
-                        <span className="font-mono text-white">ESP32-S3 UWB 5.3</span>
-                      </div>
-                      <div className="flex justify-between text-xs">
-                        <span className="text-emerald-200">Pairing Key:</span>
-                        <span className="font-mono text-[#00ff66]">Direct Hardware Lock</span>
-                      </div>
-                    </div>
-
-                    <button 
-                      onClick={confirmPairDevice}
-                      className="w-full py-4 rounded-2xl liquid-glass-btn text-black font-extrabold text-sm shadow-2xl"
-                    >
-                      Connect & Save Beacon
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              <div className="pb-6">
+              {/* Multi-Device Badge */}
+              {devices.length > 1 && (
                 <button 
-                  onClick={() => {
-                    window.playLiquidDropSound();
-                    setCurrentView('home');
-                  }}
-                  className="w-full py-3.5 rounded-2xl liquid-secondary-btn text-xs font-bold text-emerald-200"
+                  onClick={(e) => { e.stopPropagation(); setShowDeviceDrawer(true); }}
+                  className="px-3 py-1.5 rounded-full apple-glass-btn text-[11px] font-bold text-[#34c759] flex items-center gap-1"
                 >
-                  Cancel Scan
+                  <Icon name="layers" size={13} />
+                  <span>{devices.length}</span>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* ========================================================
+              CENTER CANVAS: RADAR & DIRECTION ARROW OR BLUETOOTH ORB
+              ======================================================== */}
+          <div className="flex-1 w-full flex flex-col items-center justify-center relative px-6 z-10">
+            {!currentDevice && (
+              <div className="flex flex-col items-center justify-center text-center p-8">
+                {/* Minimal Liquid Glass Bluetooth Logo Orb */}
+                <div className="w-24 h-24 rounded-full apple-bluetooth-orb flex items-center justify-center mb-6 shadow-2xl">
+                  <Icon name="bluetooth" size={38} className="text-[#34c759]" />
+                </div>
+                <h2 className="text-xl font-extrabold text-white">No TrackoVex AirTag Found</h2>
+                <p className="text-xs text-emerald-200/80 max-w-xs mt-2 leading-relaxed">
+                  Power ON your Bluetooth beacon and tap the plus key on the dock to pair.
+                </p>
+              </div>
+            )}
+
+            {currentDevice && (
+              <div className="w-full flex flex-col items-center justify-center">
+                {searchState === "searching" ? (
+                  <div className="flex flex-col items-center justify-center">
+                    <ParticleRadarRing />
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center">
+                    <DirectionArrowView angle={arrowAngle} />
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* ========================================================
+              BOTTOM DISTANCE & ACTIONS READOUT (UNTOUCHED LAYOUT)
+              ======================================================== */}
+          {currentDevice && (
+            <div className="w-full px-8 pb-32 pt-2 z-20 flex flex-col justify-end">
+              <div className="mb-2 select-none">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-6xl sm:text-7xl font-extrabold tracking-tight text-white font-sans">
+                    {searchState === "searching" ? "11" : distanceVal}
+                  </span>
+                  <span className="text-4xl sm:text-5xl font-light text-emerald-300 font-sans">
+                    {distanceUnit}
+                  </span>
+                </div>
+
+                {searchState === "found" && (
+                  <div className="text-2xl sm:text-3xl font-normal text-emerald-200/90 tracking-tight mt-0.5 font-sans">
+                    to your <span className="text-[#34c759] font-bold">{directionLabel.replace("to your ", "")}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Disconnect & Buzzer triggers */}
+              <div className="flex items-center justify-between mt-2">
+                <button 
+                  onClick={handleUnpair}
+                  className="w-12 h-12 rounded-full apple-glass-circle flex items-center justify-center text-white/80 hover:text-rose-400"
+                  title="Disconnect Device"
+                >
+                  <Icon name="x" size={20} className="stroke-[2.5]" />
+                </button>
+
+                <button 
+                  onClick={handleTriggerBuzzer}
+                  className={`w-12 h-12 rounded-full apple-glass-circle flex items-center justify-center transition-all ${
+                    isBuzzerSounding ? 'apple-buzzer-active animate-buzzer-gentle text-rose-300' : 'text-[#34c759]'
+                  }`}
+                  title="Alert TrackoVex Buzzer (ESP32)"
+                >
+                  <Icon 
+                    name={isBuzzerSounding ? "bell-ring" : "volume-2"} 
+                    size={20} 
+                    className={`stroke-[2.2] ${isBuzzerSounding ? 'text-rose-300' : ''}`} 
+                  />
                 </button>
               </div>
             </div>
           )}
 
           {/* ========================================================
-              VIEW 4: SETTINGS VIEW (NO DOCK HERE - REMOVED AS REQUESTED)
-              Features: Customer Feedback, Support Mail, Editable HTML Items
+              AUTHENTIC APPLE LIQUID GLASS DOCK (AS IN ATTACHED IMAGE)
+              RULE: STRICTLY RENDERED ONLY ON HOMEPAGE!
+              NOT AT PAIRING, TRACKING, OR SETTINGS!
+              Features smooth sliding glass indicator!
               ======================================================== */}
-          {currentView === 'settings' && (
-            <div className="flex-1 w-full px-6 py-2 overflow-y-auto page-view-enter z-20 space-y-6 pb-12">
-              
-              {/* GROUP 1: CUSTOMER FEEDBACK FEATURE */}
-              <div className="space-y-2">
-                <div className="text-[11px] font-bold uppercase tracking-wider text-emerald-300 px-2 flex items-center gap-1.5">
-                  <Icon name="message-square" size={14} />
-                  <span>Customer Feedback</span>
-                </div>
+          {isDockVisible && (
+            <div className="fixed bottom-6 inset-x-0 z-40 flex justify-center px-4 pointer-events-none transition-all duration-300">
+              <div className="pointer-events-auto px-2 py-2 apple-glass-dock flex items-center shadow-2xl relative w-full max-w-[320px]">
                 
-                <div className="apple-glass-card p-5 space-y-4">
-                  <div className="text-xs text-emerald-100/90 leading-relaxed">
-                    Have thoughts or suggestions on the hardware or fluid UI? Help us improve TrackoVex.
-                  </div>
+                {/* Minimal Sliding Liquid Pill Highlight across options */}
+                <div 
+                  className="absolute top-2 bottom-2 rounded-full transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] pointer-events-none"
+                  style={{
+                    left: `calc(${activeDockTab * 33.33}% + 6px)`,
+                    width: `calc(33.33% - 12px)`,
+                    background: 'rgba(255, 255, 255, 0.18)',
+                    border: '1px solid rgba(255, 255, 255, 0.4)',
+                    boxShadow: 'inset 0 1px 1.5px rgba(255, 255, 255, 0.65), 0 4px 12px rgba(0, 0, 0, 0.25)',
+                    backdropFilter: 'blur(10px)'
+                  }}
+                />
 
-                  <form onSubmit={handleFeedbackSubmit} className="space-y-3.5">
-                    {/* Star Rating Selector */}
-                    <div>
-                      <label className="text-[11px] font-semibold text-emerald-300 block mb-1">Experience Rating</label>
+                {/* 1. ADD / PAIR BUTTON */}
+                <button 
+                  onClick={(e) => { 
+                    e.stopPropagation(); 
+                    setActiveDockTab(0);
+                    startBLEScan(); 
+                  }}
+                  className="flex-1 flex flex-col items-center py-2 relative z-10 transition-transform active:scale-95 group"
+                >
+                  <Icon name="plus" size={19} className="stroke-[2.2] text-white/90 group-hover:text-[#34c759]" />
+                  <span className="text-[10px] font-semibold text-emerald-100/90 mt-0.5">Add</span>
+                </button>
+
+                {/* 2. RENAME BUTTON */}
+                <button 
+                  onClick={(e) => { 
+                    e.stopPropagation(); 
+                    setActiveDockTab(1);
+                    openRename(currentDevice); 
+                  }}
+                  className="flex-1 flex flex-col items-center py-2 relative z-10 transition-transform active:scale-95 group"
+                >
+                  <Icon name="edit-3" size={18} className="stroke-[2.2] text-white/90 group-hover:text-[#34c759]" />
+                  <span className="text-[10px] font-semibold text-emerald-100/90 mt-0.5">Rename</span>
+                </button>
+
+                {/* 3. SETTINGS BUTTON */}
+                <button 
+                  onClick={(e) => { 
+                    e.stopPropagation(); 
+                    setActiveDockTab(2);
+                    setShowSettingsModal(true); 
+                  }}
+                  className="flex-1 flex flex-col items-center py-2 relative z-10 transition-transform active:scale-95 group"
+                >
+                  <Icon name="settings" size={18} className="stroke-[2.2] text-white/90 group-hover:text-[#34c759]" />
+                  <span className="text-[10px] font-semibold text-emerald-100/90 mt-0.5">Settings</span>
+                </button>
+
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================
+              SETTINGS MODAL (FULL LIQUID GLASS - NO DOCK PRESENT)
+              Customer Feedback, Support Mail, Editable HTML Fields
+              ======================================================== */}
+          {showSettingsModal && (
+            <div 
+              onClick={(e) => { e.stopPropagation(); setShowSettingsModal(false); }}
+              className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 bg-black/75 backdrop-blur-2xl transition-all duration-300"
+            >
+              <div 
+                onClick={(e) => e.stopPropagation()}
+                className="w-full sm:max-w-md rounded-t-[36px] sm:rounded-[36px] apple-glass-panel p-6 shadow-2xl space-y-5 border border-white/30 max-h-[85vh] overflow-y-auto"
+              >
+                {/* Title Bar */}
+                <div className="flex items-center justify-between pb-2 border-b border-white/15">
+                  <h2 className="text-xl font-extrabold text-white tracking-tight">Settings</h2>
+                  <button 
+                    onClick={() => setShowSettingsModal(false)}
+                    className="w-8 h-8 rounded-full apple-glass-btn text-white/80 flex items-center justify-center hover:text-white"
+                  >
+                    <Icon name="x" size={18} />
+                  </button>
+                </div>
+
+                {/* FEATURE 1: CUSTOMER FEEDBACK (Editable in HTML) */}
+                <div className="space-y-1.5">
+                  <div className="text-[11px] font-bold uppercase tracking-wider text-emerald-300 px-2 flex items-center gap-1.5">
+                    <Icon name="message-square" size={13} />
+                    <span>Customer Feedback</span>
+                  </div>
+                  <div className="apple-settings-card p-4 space-y-3">
+                    <div className="text-xs text-emerald-100/80">
+                      Share your experience or report bugs with the beacon hardware:
+                    </div>
+
+                    <form onSubmit={handleFeedbackSubmit} className="space-y-3">
+                      {/* Star Rating */}
                       <div className="flex items-center gap-2">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <button
                             type="button"
                             key={star}
                             onClick={() => {
-                              window.playLiquidDropSound(1 + star * 0.1);
+                              window.playGentleTap();
                               setFeedbackRating(star);
                             }}
                             className="p-1 transition-transform active:scale-90"
                           >
                             <Icon 
                               name="star" 
-                              size={22} 
-                              className={star <= feedbackRating ? "text-[#00ff66] fill-[#00ff66]" : "text-white/20"} 
+                              size={18} 
+                              className={star <= feedbackRating ? "text-[#34c759] fill-[#34c759]" : "text-white/20"} 
                             />
                           </button>
                         ))}
-                        <span className="text-xs font-mono text-emerald-200 ml-2">{feedbackRating} / 5 Stars</span>
+                        <span className="text-xs text-emerald-200/80 ml-2 font-mono">{feedbackRating} / 5 Stars</span>
                       </div>
-                    </div>
 
-                    {/* Feedback Category */}
-                    <div>
-                      <label className="text-[11px] font-semibold text-emerald-300 block mb-1">Feedback Category</label>
-                      <select 
-                        value={feedbackCategory}
-                        onChange={(e) => setFeedbackCategory(e.target.value)}
-                        className="w-full px-3.5 py-2.5 rounded-xl liquid-input text-xs font-medium"
-                      >
-                        <option value="General Feedback" className="bg-[#011a0b] text-white">General UI/UX Feedback</option>
-                        <option value="ESP32 Buzzer" className="bg-[#011a0b] text-white">ESP32 Buzzer & Sound</option>
-                        <option value="Precision Tracking" className="bg-[#011a0b] text-white">Precision Tracking / Radar</option>
-                        <option value="Feature Request" className="bg-[#011a0b] text-white">New Feature Request</option>
-                        <option value="Bug Report" className="bg-[#011a0b] text-white">Bug Report</option>
-                      </select>
-                    </div>
-
-                    {/* Textarea */}
-                    <div>
-                      <label className="text-[11px] font-semibold text-emerald-300 block mb-1">Your Comments</label>
-                      <textarea 
-                        rows="3"
-                        value={feedbackComment}
-                        onChange={(e) => setFeedbackComment(e.target.value)}
-                        placeholder="Write your suggestions here..."
-                        required
-                        className="w-full p-3 rounded-xl liquid-input text-xs resize-none"
-                      ></textarea>
-                    </div>
-
-                    <button 
-                      type="submit"
-                      disabled={feedbackSubmitted}
-                      className="w-full py-3 rounded-xl liquid-glass-btn text-black font-extrabold text-xs shadow-lg active:scale-95 transition-all"
-                    >
-                      {feedbackSubmitted ? "✓ Feedback Sent!" : "Submit Customer Feedback"}
-                    </button>
-                  </form>
-                </div>
-              </div>
-
-              {/* GROUP 2: SUPPORT & CONTACT INFO */}
-              <div className="space-y-2">
-                <div className="text-[11px] font-bold uppercase tracking-wider text-emerald-300 px-2 flex items-center gap-1.5">
-                  <Icon name="life-buoy" size={14} />
-                  <span>Support & Assistance</span>
-                </div>
-
-                <div className="apple-glass-card divide-y divide-white/10">
-                  {/* Support Mail */}
-                  <div className="p-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-rose-500/25 text-rose-300 flex items-center justify-center">
-                        <Icon name="mail" size={16} />
-                      </div>
+                      {/* Category */}
                       <div>
-                        <div className="text-xs font-bold text-white">Support Email</div>
+                        <select 
+                          value={feedbackCategory}
+                          onChange={(e) => setFeedbackCategory(e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl apple-glass-input text-xs"
+                        >
+                          <option value="General UI" className="bg-[#040d07] text-white">General UI & Liquid Glass</option>
+                          <option value="ESP32 Buzzer" className="bg-[#040d07] text-white">ESP32 Buzzer Feedback</option>
+                          <option value="Tracking" className="bg-[#040d07] text-white">Direction / Distance Radar</option>
+                          <option value="Feature" className="bg-[#040d07] text-white">Feature Request</option>
+                        </select>
+                      </div>
+
+                      {/* Comment */}
+                      <div>
+                        <textarea 
+                          rows="2"
+                          value={feedbackComment}
+                          onChange={(e) => setFeedbackComment(e.target.value)}
+                          placeholder="Your comments..."
+                          required
+                          className="w-full p-2.5 rounded-xl apple-glass-input text-xs resize-none"
+                        ></textarea>
+                      </div>
+
+                      <button 
+                        type="submit"
+                        className="w-full py-2.5 rounded-xl apple-primary-glass-btn text-white text-xs font-bold"
+                      >
+                        {feedbackSent ? "✓ Feedback Submitted" : "Send Customer Feedback"}
+                      </button>
+                    </form>
+                  </div>
+                </div>
+
+                {/* FEATURE 2: SUPPORT EMAIL & HELPLINE */}
+                <div className="space-y-1.5">
+                  <div className="text-[11px] font-bold uppercase tracking-wider text-emerald-300 px-2 flex items-center gap-1.5">
+                    <Icon name="mail" size={13} />
+                    <span>Support & Contact</span>
+                  </div>
+                  <div className="apple-settings-card divide-y divide-white/10">
+                    <div className="p-3.5 flex items-center justify-between">
+                      <div>
+                        <div className="text-xs font-semibold text-white">Official Support Email</div>
                         <div className="text-[11px] font-mono text-emerald-300">{APP_CONFIG.supportEmail}</div>
                       </div>
+                      <a 
+                        href={`mailto:${APP_CONFIG.supportEmail}?subject=TrackoVex%20Support`}
+                        className="px-3 py-1.5 rounded-full apple-glass-btn text-xs font-bold text-[#34c759]"
+                      >
+                        Email
+                      </a>
                     </div>
 
-                    <a 
-                      href={`mailto:${APP_CONFIG.supportEmail}?subject=TrackoVex%20Support%20Request`}
-                      className="px-3 py-1.5 rounded-full liquid-secondary-btn text-[11px] font-bold text-[#00ff66]"
-                    >
-                      Email Us
-                    </a>
-                  </div>
-
-                  {/* Hotline */}
-                  <div className="p-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-blue-500/25 text-blue-300 flex items-center justify-center">
-                        <Icon name="phone" size={16} />
-                      </div>
+                    <div className="p-3.5 flex items-center justify-between">
                       <div>
-                        <div className="text-xs font-bold text-white">Helpline</div>
+                        <div className="text-xs font-semibold text-white">Helpline Phone</div>
                         <div className="text-[11px] font-mono text-emerald-300">{APP_CONFIG.supportPhone}</div>
                       </div>
-                    </div>
-
-                    <button 
-                      onClick={() => {
-                        navigator.clipboard?.writeText(APP_CONFIG.supportPhone);
-                        notify("Phone copied to clipboard!");
-                      }}
-                      className="px-3 py-1.5 rounded-full liquid-secondary-btn text-[11px] font-bold text-white"
-                    >
-                      Copy
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* GROUP 3: SYSTEM PREFERENCES & EDITABLE HARDWARE ITEMS */}
-              <div className="space-y-2">
-                <div className="text-[11px] font-bold uppercase tracking-wider text-emerald-300 px-2 flex items-center gap-1.5">
-                  <Icon name="sliders" size={14} />
-                  <span>Preferences & Hardware Specs</span>
-                </div>
-
-                <div className="apple-glass-card divide-y divide-white/10">
-                  {/* Distance Units Switch */}
-                  <div className="p-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-emerald-500/25 text-[#00ff66] flex items-center justify-center">
-                        <Icon name="compass" size={16} />
-                      </div>
-                      <span className="text-xs font-semibold text-white">Measurement Units</span>
-                    </div>
-                    <div className="flex gap-1 p-1 rounded-full liquid-glass-card">
                       <button 
-                        onClick={() => setDistanceUnit('ft')}
-                        className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all ${
-                          distanceUnit === 'ft' ? 'bg-[#00ff66] text-black shadow' : 'text-emerald-300'
-                        }`}
+                        onClick={() => {
+                          navigator.clipboard?.writeText(APP_CONFIG.supportPhone);
+                          notify("Phone copied!");
+                        }}
+                        className="px-3 py-1.5 rounded-full apple-glass-btn text-xs font-semibold text-white"
                       >
-                        Feet (ft)
-                      </button>
-                      <button 
-                        onClick={() => setDistanceUnit('m')}
-                        className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all ${
-                          distanceUnit === 'm' ? 'bg-[#00ff66] text-black shadow' : 'text-emerald-300'
-                        }`}
-                      >
-                        Meters (m)
+                        Copy
                       </button>
                     </div>
                   </div>
+                </div>
 
-                  {/* Haptic Toggle */}
-                  <div className="p-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-purple-500/25 text-purple-300 flex items-center justify-center">
-                        <Icon name="smartphone" size={16} />
-                      </div>
-                      <span className="text-xs font-semibold text-white">Liquid Water Haptics</span>
-                    </div>
-                    <button 
-                      onClick={() => setHapticEnabled(!hapticEnabled)}
-                      className={`w-12 h-6 rounded-full transition-colors p-0.5 flex items-center ${
-                        hapticEnabled ? 'bg-[#00ff66] justify-end' : 'bg-white/20 justify-start'
-                      }`}
-                    >
-                      <span className="w-5 h-5 rounded-full bg-white shadow-md"></span>
-                    </button>
+                {/* FEATURE 3: PREFERENCES & SYSTEM INFO */}
+                <div className="space-y-1.5">
+                  <div className="text-[11px] font-bold uppercase tracking-wider text-emerald-300 px-2 flex items-center gap-1.5">
+                    <Icon name="sliders" size={13} />
+                    <span>System & Preferences</span>
                   </div>
-
-                  {/* Hardware Protocol (Editable) */}
-                  <div className="p-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-cyan-500/25 text-cyan-300 flex items-center justify-center">
-                        <Icon name="cpu" size={16} />
+                  <div className="apple-settings-card divide-y divide-white/10">
+                    {/* Unit Switch */}
+                    <div className="p-3.5 flex items-center justify-between">
+                      <span className="text-xs font-semibold text-white">Distance Unit</span>
+                      <div className="flex gap-1">
+                        <button 
+                          onClick={() => setDistanceUnit('ft')}
+                          className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
+                            distanceUnit === 'ft' ? 'bg-[#34c759] text-white shadow' : 'text-emerald-300/80'
+                          }`}
+                        >
+                          Feet (ft)
+                        </button>
+                        <button 
+                          onClick={() => setDistanceUnit('m')}
+                          className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
+                            distanceUnit === 'm' ? 'bg-[#34c759] text-white shadow' : 'text-emerald-300/80'
+                          }`}
+                        >
+                          Meters (m)
+                        </button>
                       </div>
+                    </div>
+
+                    {/* Version */}
+                    <div className="p-3.5 flex items-center justify-between">
+                      <span className="text-xs font-semibold text-white">Version</span>
+                      <span className="text-xs font-mono font-bold text-[#34c759]">{APP_CONFIG.version}</span>
+                    </div>
+
+                    {/* Hardware Protocol */}
+                    <div className="p-3.5 flex items-center justify-between">
                       <span className="text-xs font-semibold text-white">Hardware Protocol</span>
+                      <span className="text-xs font-mono text-emerald-200">{APP_CONFIG.hardwareProtocol}</span>
                     </div>
-                    <span className="text-[11px] font-mono text-emerald-200">{APP_CONFIG.hardwareProtocol}</span>
-                  </div>
-
-                  {/* Version */}
-                  <div className="p-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-amber-500/25 text-amber-300 flex items-center justify-center">
-                        <Icon name="tag" size={16} />
-                      </div>
-                      <span className="text-xs font-semibold text-white">Software Version</span>
-                    </div>
-                    <span className="text-[11px] font-mono font-bold text-[#00ff66] bg-[#00ff66]/20 px-2.5 py-1 rounded-full border border-[#00ff66]/30">
-                      {APP_CONFIG.version}
-                    </span>
                   </div>
                 </div>
-              </div>
 
-              {/* ABOUT SECTION CARD */}
-              <div className="apple-glass-card p-5 space-y-2">
-                <div className="text-xs font-bold text-white flex items-center gap-2">
-                  <Icon name="info" size={15} className="text-[#00ff66]" />
-                  <span>About {APP_CONFIG.appName}</span>
-                </div>
-                <p className="text-xs text-emerald-100/80 leading-relaxed">
-                  {APP_CONFIG.aboutDescription}
-                </p>
-                <div className="pt-2 text-[10px] text-emerald-300/70 font-mono">
-                  Engineered by {APP_CONFIG.developerTeam} • Build {APP_CONFIG.buildNumber}
-                </div>
+                <button 
+                  onClick={() => setShowSettingsModal(false)}
+                  className="w-full py-3.5 rounded-2xl apple-glass-btn text-white text-xs font-bold shadow-lg transition-all mt-2"
+                >
+                  Done
+                </button>
               </div>
-
             </div>
           )}
 
           {/* ========================================================
-              FLOATING LIQUID GLASS DOCK
-              STRICTLY SHOWN ONLY ON HOMEPAGE!
-              NOT ON TRACKING, PAIRING, OR SETTINGS!
-              Includes fluid sliding active indicator & switch animations!
+              MODAL: ESP32 BLUETOOTH PAIRING (NO DOCK PRESENT)
               ======================================================== */}
-          {currentView === 'home' && (
-            <div className="fixed bottom-6 inset-x-0 z-40 flex justify-center px-4 pointer-events-none">
-              <div className="pointer-events-auto px-4 py-2.5 rounded-full liquid-floating-dock flex items-center gap-2 sm:gap-4 shadow-2xl animate-dock-bounce relative">
-                
-                {/* 1. HOME TAB */}
-                <button 
-                  onClick={() => {
-                    window.playLiquidDropSound(1.0);
-                    setDockActiveTab('home');
-                    setCurrentView('home');
-                  }}
-                  className={`relative px-4 py-2 rounded-full flex flex-col items-center gap-1 transition-all duration-300 ${
-                    dockActiveTab === 'home' ? 'liquid-dock-pill text-[#00ff66] scale-105' : 'text-white/70 hover:text-white'
-                  }`}
-                >
-                  <Icon name="home" size={20} className="stroke-[2.2]" />
-                  <span className="text-[10px] font-extrabold tracking-tight">Home</span>
-                </button>
+          {isScanningBLE && (
+            <div 
+              onClick={(e) => { e.stopPropagation(); setIsScanningBLE(false); }}
+              className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 bg-black/75 backdrop-blur-2xl transition-all duration-300"
+            >
+              <div 
+                onClick={(e) => e.stopPropagation()}
+                className="w-full sm:max-w-sm rounded-t-[36px] sm:rounded-[36px] apple-glass-panel p-7 shadow-2xl space-y-5 border border-white/30"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Icon name="bluetooth" size={20} className="text-[#34c759]" />
+                    <h3 className="text-lg font-bold text-white">Pair TrackoVex BLE</h3>
+                  </div>
+                  <button onClick={() => setIsScanningBLE(false)} className="p-1 text-emerald-300 hover:text-white">
+                    <Icon name="x" size={18} />
+                  </button>
+                </div>
 
-                {/* 2. ADD / PAIR TAB */}
-                <button 
-                  onClick={() => {
-                    window.playLiquidDropSound(1.3);
-                    setDockActiveTab('pair');
-                    startBLEScan();
-                  }}
-                  className={`relative px-4 py-2 rounded-full flex flex-col items-center gap-1 transition-all duration-300 ${
-                    dockActiveTab === 'pair' ? 'liquid-dock-pill text-[#00ff66] scale-105' : 'text-white/70 hover:text-white'
-                  }`}
-                >
-                  <Icon name="plus-circle" size={20} className="stroke-[2.2]" />
-                  <span className="text-[10px] font-extrabold tracking-tight">Pair</span>
-                </button>
+                {bleStatus === "scanning" && (
+                  <div className="py-8 flex flex-col items-center text-center">
+                    <div className="w-16 h-16 rounded-full apple-bluetooth-orb text-[#34c759] flex items-center justify-center mb-4">
+                      <Icon name="radio" size={28} className="animate-pulse" />
+                    </div>
+                    <p className="text-sm font-bold text-white">Listening for Bluetooth Signals...</p>
+                    <p className="text-xs text-emerald-200/80 mt-1">Ensure your TrackoVex beacon is nearby</p>
+                  </div>
+                )}
 
-                {/* 3. SETTINGS TAB */}
-                <button 
-                  onClick={() => {
-                    window.playLiquidDropSound(1.1);
-                    setDockActiveTab('settings');
-                    setCurrentView('settings');
-                  }}
-                  className={`relative px-4 py-2 rounded-full flex flex-col items-center gap-1 transition-all duration-300 ${
-                    dockActiveTab === 'settings' ? 'liquid-dock-pill text-[#00ff66] scale-105' : 'text-white/70 hover:text-white'
-                  }`}
-                >
-                  <Icon name="settings" size={20} className="stroke-[2.2]" />
-                  <span className="text-[10px] font-extrabold tracking-tight">Settings</span>
-                </button>
+                {bleStatus === "discovered" && discoveredESP && (
+                  <div className="space-y-4">
+                    <div className="p-4 rounded-2xl apple-settings-card flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl apple-bluetooth-orb flex items-center justify-center text-[#34c759]">
+                          <Icon name="cpu" size={20} />
+                        </div>
+                        <div>
+                          <div className="text-sm font-bold text-white">{discoveredESP.rawName}</div>
+                          <div className="text-[11px] text-emerald-300 font-mono">Battery: {discoveredESP.battery}%</div>
+                        </div>
+                      </div>
+                      <span className="text-xs font-mono font-bold text-[#34c759]">{discoveredESP.rssi}</span>
+                    </div>
 
+                    <button 
+                      onClick={confirmPairDevice}
+                      className="w-full py-3.5 rounded-2xl apple-primary-glass-btn text-white text-xs font-bold shadow-xl active:scale-95 transition-all"
+                    >
+                      Connect & Begin Tracking
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           )}
 
           {/* ========================================================
-              MODAL: RENAME BEACON
+              MODAL: RENAME DEVICE
               ======================================================== */}
           {isRenaming && (
             <div 
               onClick={(e) => { e.stopPropagation(); setIsRenaming(false); }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/75 backdrop-blur-2xl animate-fade-in"
+              className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/75 backdrop-blur-2xl transition-all duration-300"
             >
               <div 
                 onClick={(e) => e.stopPropagation()}
-                className="w-full max-w-sm rounded-[36px] liquid-glass-panel p-7 shadow-2xl space-y-4 specular-gloss modal-sheet-enter"
+                className="w-full max-w-sm rounded-[32px] apple-glass-panel p-7 shadow-2xl space-y-4 border border-white/30"
               >
                 <div className="text-center">
-                  <h3 className="text-xl font-extrabold text-white">Rename Beacon</h3>
-                  <p className="text-xs text-emerald-200 mt-1">Assign a custom name to this beacon</p>
+                  <h3 className="text-xl font-extrabold text-white">Rename TrackoVex</h3>
+                  <p className="text-xs text-emerald-200/80 mt-1">Customize beacon label</p>
                 </div>
 
                 <div>
@@ -1715,22 +1345,22 @@
                     type="text"
                     value={renameInput}
                     onChange={(e) => setRenameInput(e.target.value)}
-                    placeholder="e.g. Car Keys, Backpack"
+                    placeholder="e.g. Camera, Keys, Wallet"
                     autoFocus
-                    className="w-full px-4 py-3.5 rounded-2xl liquid-input text-base font-semibold text-white"
+                    className="w-full px-4 py-3.5 rounded-2xl apple-glass-input text-white text-base font-semibold focus:outline-none"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 pt-2">
                   <button 
                     onClick={() => setIsRenaming(false)}
-                    className="py-3 rounded-2xl liquid-secondary-btn text-xs font-bold text-white"
+                    className="py-3 rounded-2xl apple-glass-btn text-white text-xs font-semibold"
                   >
                     Cancel
                   </button>
                   <button 
                     onClick={saveRename}
-                    className="py-3 rounded-2xl liquid-glass-btn text-black text-xs font-extrabold shadow-lg"
+                    className="py-3 rounded-2xl apple-primary-glass-btn text-white text-xs font-bold shadow-lg"
                   >
                     Save
                   </button>
@@ -1740,60 +1370,61 @@
           )}
 
           {/* ========================================================
-              DRAWER: MULTI-BEACON QUICK SWITCHER
+              DRAWER: MULTI-DEVICE SWITCHER
               ======================================================== */}
           {showDeviceDrawer && (
             <div 
               onClick={(e) => { e.stopPropagation(); setShowDeviceDrawer(false); }}
-              className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:p-6 bg-black/80 backdrop-blur-2xl animate-fade-in"
+              className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:p-6 bg-black/75 backdrop-blur-2xl transition-all duration-300"
             >
               <div 
                 onClick={(e) => e.stopPropagation()}
-                className="w-full sm:max-w-md rounded-t-[36px] sm:rounded-[36px] liquid-glass-panel p-6 shadow-2xl space-y-4 specular-gloss modal-sheet-enter"
+                className="w-full sm:max-w-md rounded-t-[36px] sm:rounded-[36px] apple-glass-panel p-6 shadow-2xl space-y-4 border border-white/30"
               >
                 <div className="flex items-center justify-between pb-1">
                   <div>
-                    <h3 className="text-lg font-extrabold text-white">Select Active Beacon</h3>
-                    <p className="text-xs text-emerald-300">Switch current tracking focus</p>
+                    <h3 className="text-lg font-bold text-white">Active TrackoVex Devices</h3>
+                    <p className="text-xs text-emerald-300/70">Switch focus between connected beacons</p>
                   </div>
                   <button onClick={() => setShowDeviceDrawer(false)} className="p-1 text-emerald-300 hover:text-white">
-                    <Icon name="x" size={20} />
+                    <Icon name="x" size={18} />
                   </button>
                 </div>
 
-                <div className="space-y-2.5 max-h-60 overflow-y-auto">
+                <div className="space-y-2 max-h-60 overflow-y-auto">
                   {devices.map(dev => {
                     const isActive = dev.id === currentDevice?.id;
                     return (
                       <div 
                         key={dev.id}
                         onClick={() => {
-                          window.playLiquidDropSound();
                           setActiveDeviceId(dev.id);
                           setShowDeviceDrawer(false);
-                          notify(`Selected "${dev.name}"`);
+                          notify(`Switched to ${dev.name}`);
                         }}
-                        className={`p-3.5 rounded-2xl liquid-glass-card flex items-center justify-between cursor-pointer transition-all ${
-                          isActive ? 'border-[#00ff66] bg-[#00ff66]/20' : 'hover:bg-white/10'
+                        className={`p-3.5 rounded-2xl flex items-center justify-between cursor-pointer transition-all border ${
+                          isActive 
+                            ? 'bg-white/20 border-[#34c759]' 
+                            : 'bg-white/5 border-white/10 hover:bg-white/10'
                         }`}
                       >
                         <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                            isActive ? 'bg-[#00ff66] text-black font-bold' : 'bg-white/10 text-white'
+                          <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
+                            isActive ? 'bg-[#34c759] text-white' : 'bg-white/10 text-white/80'
                           }`}>
-                            <Icon name="radio" size={18} />
+                            <Icon name="radio" size={16} />
                           </div>
                           <div>
                             <div className="text-sm font-bold text-white flex items-center gap-2">
                               <span>{dev.name}</span>
-                              {isActive && <span className="w-2 h-2 rounded-full bg-[#00ff66]"></span>}
+                              {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#34c759]"></span>}
                             </div>
-                            <div className="text-[11px] text-emerald-300 font-mono">Battery: {dev.battery}%</div>
+                            <div className="text-[11px] text-emerald-300/80 font-mono">Battery: {dev.battery}%</div>
                           </div>
                         </div>
 
-                        <span className={`text-xs font-bold ${isActive ? 'text-[#00ff66]' : 'text-neutral-400'}`}>
-                          {isActive ? "Active" : "Switch"}
+                        <span className={`text-xs font-semibold ${isActive ? 'text-[#34c759]' : 'text-neutral-400'}`}>
+                          {isActive ? "Active" : "Select"}
                         </span>
                       </div>
                     );
@@ -1805,7 +1436,7 @@
                     setShowDeviceDrawer(false);
                     startBLEScan();
                   }}
-                  className="w-full py-3.5 rounded-2xl liquid-glass-btn text-black text-xs font-extrabold shadow-lg flex items-center justify-center gap-2"
+                  className="w-full py-3.5 rounded-2xl apple-primary-glass-btn text-white text-xs font-bold shadow-lg flex items-center justify-center gap-2"
                 >
                   <Icon name="plus" size={16} />
                   <span>Pair Another TrackoVex</span>
@@ -1818,7 +1449,7 @@
       );
     }
 
-    // Mount the Application
+    // Mount Application
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<TrackoVexApp />);
   </script>
