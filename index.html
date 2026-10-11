@@ -30,7 +30,8 @@
             'spin-dots': 'spinDots 12s linear infinite',
             'float-disc': 'floatDisc 4s ease-in-out infinite',
             'buzzer-ping': 'buzzerPing 0.8s ease-in-out infinite',
-            'touch-ripple': 'touchRipple 0.6s ease-out forwards'
+            'touch-ripple': 'touchRipple 0.6s ease-out forwards',
+            'dock-bounce': 'dockBounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
           },
           keyframes: {
             spinDots: {
@@ -47,7 +48,11 @@
             },
             touchRipple: {
               '0%': { transform: 'scale(0)', opacity: '0.8' },
-              '100%': { transform: 'scale(3.5)', opacity: '0' }
+              '100%': { transform: 'scale(3.8)', opacity: '0' }
+            },
+            dockBounce: {
+              '0%': { transform: 'scale(0.85) translateY(20px)', opacity: '0' },
+              '100%': { transform: 'scale(1) translateY(0)', opacity: '1' }
             }
           }
         }
@@ -87,16 +92,16 @@
   </script>
 
   <style>
-    /* Fullscreen Neon-Green to Dark-Green Transition Background */
+    /* Fullscreen Background Gradient */
     html, body {
       width: 100%;
       height: 100%;
       margin: 0;
       padding: 0;
       overflow: hidden;
-      background: linear-gradient(145deg, #021a0b 0%, #063d19 50%, #00ff66 100%);
+      background: linear-gradient(150deg, #011207 0%, #053b17 45%, #00ff66 100%);
       background-size: 200% 200%;
-      animation: gradientShift 10s ease infinite;
+      animation: gradientShift 12s ease infinite;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
@@ -120,52 +125,70 @@
       position: relative;
     }
 
-    /* Glassmorphism tuned for Neon Theme */
+    /* HIGH-GLOSS LIQUID GLASS STYLING (Inspired by Reference UI) */
     .ios-liquid-glass {
-      background: rgba(4, 30, 15, 0.45);
-      backdrop-filter: blur(40px) saturate(220%);
-      -webkit-backdrop-filter: blur(40px) saturate(220%);
-      border: 1.5px solid rgba(0, 255, 102, 0.3);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(0, 255, 102, 0.08) 50%, rgba(0, 0, 0, 0.3) 100%);
+      backdrop-filter: blur(35px) saturate(220%);
+      -webkit-backdrop-filter: blur(35px) saturate(220%);
+      border: 1.5px solid rgba(255, 255, 255, 0.4);
+      border-top: 2px solid rgba(255, 255, 255, 0.65);
+      border-left: 1.5px solid rgba(255, 255, 255, 0.5);
       box-shadow: 
-        0 20px 50px rgba(0, 0, 0, 0.7),
-        inset 0 1px 2px rgba(0, 255, 102, 0.4);
+        0 25px 50px -12px rgba(0, 0, 0, 0.6),
+        0 0 30px rgba(0, 255, 102, 0.25),
+        inset 0 1px 3px rgba(255, 255, 255, 0.7);
+    }
+
+    .liquid-dock {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.28) 0%, rgba(0, 255, 102, 0.15) 60%, rgba(5, 45, 20, 0.45) 100%);
+      backdrop-filter: blur(40px) saturate(230%);
+      -webkit-backdrop-filter: blur(40px) saturate(230%);
+      border: 1.5px solid rgba(255, 255, 255, 0.45);
+      border-top: 2px solid rgba(255, 255, 255, 0.75);
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.65),
+        0 0 35px rgba(0, 255, 102, 0.3),
+        inset 0 1.5px 2px rgba(255, 255, 255, 0.8);
     }
 
     .ios-liquid-btn {
-      background: rgba(0, 255, 102, 0.12);
-      backdrop-filter: blur(28px) saturate(200%);
-      -webkit-backdrop-filter: blur(28px) saturate(200%);
-      border: 1.5px solid rgba(0, 255, 102, 0.35);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(0, 255, 102, 0.15) 100%);
+      backdrop-filter: blur(25px) saturate(200%);
+      -webkit-backdrop-filter: blur(25px) saturate(200%);
+      border: 1.5px solid rgba(255, 255, 255, 0.4);
+      border-top: 1.5px solid rgba(255, 255, 255, 0.7);
       box-shadow: 
-        0 8px 24px rgba(0, 0, 0, 0.4),
-        inset 0 1px 2px rgba(0, 255, 102, 0.3);
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        0 8px 20px rgba(0, 0, 0, 0.35),
+        inset 0 1px 2px rgba(255, 255, 255, 0.6);
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
     .ios-liquid-btn:active {
-      transform: scale(0.94);
-      background: rgba(0, 255, 102, 0.28);
+      transform: scale(0.90);
+      background: rgba(0, 255, 102, 0.35);
+      box-shadow: 0 0 25px rgba(0, 255, 102, 0.6);
     }
 
     .ios-circle-btn {
-      background: rgba(0, 255, 102, 0.15);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(0, 255, 102, 0.15) 100%);
       backdrop-filter: blur(30px) saturate(210%);
       -webkit-backdrop-filter: blur(30px) saturate(210%);
-      border: 1.5px solid rgba(0, 255, 102, 0.4);
+      border: 1.5px solid rgba(255, 255, 255, 0.45);
+      border-top: 2px solid rgba(255, 255, 255, 0.75);
       box-shadow: 
         0 10px 30px rgba(0, 0, 0, 0.5),
-        inset 0 1px 2px rgba(0, 255, 102, 0.5);
+        inset 0 1px 2px rgba(255, 255, 255, 0.6);
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .ios-circle-btn:active {
       transform: scale(0.91);
-      background: rgba(0, 255, 102, 0.3);
+      background: rgba(0, 255, 102, 0.35);
     }
 
     .ios-circle-btn-buzzer-active {
-      background: rgba(255, 69, 58, 0.35) !important;
+      background: rgba(255, 69, 58, 0.4) !important;
       border: 2px solid #ff453a !important;
       box-shadow: 
-        0 0 35px 8px rgba(255, 69, 58, 0.6),
+        0 0 35px 8px rgba(255, 69, 58, 0.7),
         inset 0 1px 3px rgba(255, 255, 255, 0.8) !important;
     }
 
@@ -177,18 +200,29 @@
         inset 0 -5px 7px rgba(0, 0, 0, 0.4);
     }
 
-    /* Interactive Tap Animation Overlay */
+    /* Screen Touch/Click Liquid Wave Ripple */
     .click-ripple {
       position: absolute;
-      width: 80px;
-      height: 80px;
-      margin-top: -40px;
-      margin-left: -40px;
+      width: 90px;
+      height: 90px;
+      margin-top: -45px;
+      margin-left: -45px;
       border-radius: 50%;
-      border: 2px solid #00ff66;
-      box-shadow: 0 0 20px #00ff66, inset 0 0 15px #00ff66;
+      border: 2px solid rgba(0, 255, 102, 0.9);
+      background: radial-gradient(circle, rgba(0, 255, 102, 0.3) 0%, rgba(255, 255, 255, 0.1) 60%, transparent 100%);
+      box-shadow: 0 0 25px #00ff66, inset 0 0 15px #00ff66;
       pointer-events: none;
       z-index: 9999;
+    }
+
+    /* Apple-style grouped settings list card */
+    .apple-settings-card {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 18px;
+      overflow: hidden;
     }
   </style>
 </head>
@@ -199,17 +233,17 @@
     const { useState, useEffect, useRef, useMemo } = React;
 
     // ========================================================
-    // EDITABLE HTML CONFIGURATION / SETTINGS VALUES
+    // EDITABLE SETTINGS VALUES IN HTML SCRIPT
     // ========================================================
     const APP_SETTINGS = {
       appName: "TrackoVex",
-      version: "v2.4.0-Neon",
-      buildNumber: "2026.10.11",
-      aboutTitle: "TrackoVex - Precision ESP32 Tracking",
-      aboutDescription: "TrackoVex provides real-time Ultra-Wideband & BLE device location tracking with hardware ESP32 buzzer triggers, multi-beacon switching, and ultra-responsive direction finding.",
+      version: "v3.0 Liquid",
+      buildNumber: "2026.10.12",
+      aboutTitle: "TrackoVex Precision Beacon",
+      aboutDescription: "TrackoVex provides real-time Ultra-Wideband & BLE device location tracking with hardware ESP32 buzzer triggers and ultra-responsive direction finding.",
       developer: "MiniProject III Team",
       contactEmail: "support@trackovex.io",
-      hardwareVersion: "ESP32-S3 BLE 5.0"
+      hardwareVersion: "ESP32-S3 Ultra-wideband 5.0"
     };
 
     // --- Lucide Icon Helper ---
@@ -225,7 +259,7 @@
     };
 
     // ==========================================
-    // 1. INTRO SPLASH SCREEN
+    // 1. INTRO SPLASH SCREEN (NON-TRANSPARENT OPAQUE BG)
     // ==========================================
     function IntroSplash({ onContinue }) {
       const [step, setStep] = useState(1);
@@ -238,13 +272,13 @@
           setAnimatingOut(true);
           setTimeout(() => {
             onContinue();
-          }, 700);
+          }, 600);
         }
       };
 
       return (
-        <div className={`fixed inset-0 z-50 bg-gradient-to-br from-[#02180a] via-[#053013] to-[#00ff66]/20 flex flex-col justify-between px-8 py-14 transition-all duration-700 select-none ${
-          animatingOut ? 'opacity-0 scale-125 filter blur-md pointer-events-none' : 'opacity-100 scale-100'
+        <div className={`fixed inset-0 z-50 bg-[#02180a] flex flex-col justify-between px-8 py-14 transition-all duration-700 select-none ${
+          animatingOut ? 'opacity-0 scale-110 filter blur-lg pointer-events-none' : 'opacity-100 scale-100'
         }`}>
           <div className="flex justify-center pt-2">
             <div className="flex gap-2">
@@ -255,7 +289,7 @@
 
           <div className="flex-1 flex flex-col items-center justify-center">
             <div className="relative animate-float-disc flex items-center justify-center mb-10">
-              <div className="w-56 h-56 rounded-full p-2 bg-gradient-to-tr from-[#00ff66] via-white to-emerald-600 shadow-[0_25px_60px_rgba(0,255,102,0.3)] flex items-center justify-center">
+              <div className="w-56 h-56 rounded-full p-2 bg-gradient-to-tr from-[#00ff66] via-white to-emerald-600 shadow-[0_25px_60px_rgba(0,255,102,0.4)] flex items-center justify-center">
                 <div className="w-full h-full rounded-full airtag-disc-3d flex items-center justify-center p-6 relative overflow-hidden">
                   <div className="absolute inset-2 rounded-full border border-emerald-400/60 pointer-events-none"></div>
                   <img 
@@ -271,7 +305,7 @@
               <h1 className="text-3xl font-extrabold text-white tracking-tight leading-snug">
                 {step === 1 ? "Lose your knack for losing things." : "MiniProject III."}
               </h1>
-              <p className="text-sm text-emerald-300/80 mt-2 font-medium">
+              <p className="text-sm text-emerald-300 mt-2 font-medium">
                 TrackoVex • A Simple Solution
               </p>
             </div>
@@ -309,7 +343,7 @@
         const centerY = size / 2;
         const baseRadius = size * 0.38;
 
-        const particleCount = 115;
+        const particleCount = 120;
         const particles = Array.from({ length: particleCount }).map(() => ({
           angle: Math.random() * Math.PI * 2,
           radiusOffset: (Math.random() - 0.5) * 44,
@@ -357,7 +391,7 @@
     }
 
     // ==========================================
-    // 3. MINIMAL DIRECTION ARROW VIEW
+    // 3. DIRECTION ARROW VIEW
     // ==========================================
     function DirectionArrowView({ angle = 45 }) {
       return (
@@ -414,14 +448,13 @@
 
       // UI Drawer & Modal States
       const [showDeviceDrawer, setShowDeviceDrawer] = useState(false);
-      const [showSideMenu, setShowSideMenu] = useState(false);
       const [showSettingsModal, setShowSettingsModal] = useState(false);
 
       // Renaming State
       const [isRenaming, setIsRenaming] = useState(false);
       const [renameInput, setRenameInput] = useState("");
 
-      // Screen Click / Touch Ripple State
+      // Screen Ripple State
       const [ripples, setRipples] = useState([]);
 
       // Toast Notification
@@ -432,7 +465,7 @@
         setTimeout(() => setToastMsg(null), 3000);
       };
 
-      // Screen Ripple Effect on Press
+      // Handle Ripple Animation on Press
       const handleGlobalClick = (e) => {
         const x = e.clientX;
         const y = e.clientY;
@@ -507,7 +540,7 @@
 
       const confirmPairDevice = () => {
         if (!discoveredESP) return;
-        const defaultNames = ["Ben’s Camera", "Car Keys", "MacBook Sleeve", "Travel Suitcase"];
+        const defaultNames = ["Camera", "Car Keys", "MacBook Sleeve", "Suitcase"];
         const nameToUse = defaultNames[devices.length % defaultNames.length];
         
         const newDevice = {
@@ -564,7 +597,7 @@
           onClick={handleGlobalClick}
           className="relative w-screen h-screen flex flex-col overflow-hidden select-none font-sans"
         >
-          {/* CLICK / TOUCH RIPPLE ANIMATIONS */}
+          {/* SCREEN CLICK / TOUCH RIPPLE EFFECT */}
           {ripples.map(r => (
             <div 
               key={r.id} 
@@ -573,7 +606,7 @@
             />
           ))}
 
-          {/* Intro Splash */}
+          {/* Opaque Intro Splash Screen */}
           {showIntro && (
             <IntroSplash onContinue={() => setShowIntro(false)} />
           )}
@@ -589,26 +622,17 @@
           )}
 
           {/* ========================================================
-              TOP HEADER BAR WITH SIDE MENU TOGGLE & BRANDING
+              TOP HEADER BAR
               ======================================================== */}
           <div className="w-full pt-12 px-6 pb-3 flex items-start justify-between z-20">
             <div className="flex items-center gap-3">
-              {/* SIDE MENU TRIGGER BUTTON */}
-              <button 
-                onClick={(e) => { e.stopPropagation(); setShowSideMenu(true); }}
-                className="w-10 h-10 rounded-full ios-liquid-btn flex items-center justify-center text-[#00ff66] hover:text-white shadow-lg active:scale-90"
-                title="Open Side Menu"
-              >
-                <Icon name="menu" size={20} className="stroke-[2.5]" />
-              </button>
-
               <div className="flex flex-col">
-                <div className="text-[10px] font-extrabold uppercase tracking-widest text-[#00ff66]/80 font-sans">
+                <div className="text-[10px] font-extrabold uppercase tracking-widest text-[#00ff66] font-sans">
                   {currentDevice ? (searchState === "searching" ? "FINDING" : "NEARBY") : "TRACKOVEX"}
                 </div>
 
                 <div className="flex items-center gap-1.5 mt-0.5">
-                  <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white font-sans truncate max-w-[140px] sm:max-w-xs">
+                  <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white font-sans truncate max-w-[180px] sm:max-w-xs">
                     {currentDevice ? currentDevice.name : "No Beacon Paired"}
                   </h1>
                 </div>
@@ -616,7 +640,7 @@
                 {currentDevice && (
                   <div className="flex items-center gap-1.5 mt-1">
                     <div className="relative flex items-center">
-                      <div className="w-5 h-2.5 rounded-[3px] border border-[#00ff66]/80 p-[1px] flex items-center">
+                      <div className="w-5 h-2.5 rounded-[3px] border border-[#00ff66] p-[1px] flex items-center">
                         <div 
                           className={`h-full rounded-[1px] transition-all duration-500 ${
                             currentDevice.battery > 20 ? 'bg-[#00ff66]' : 'bg-[#ff453a]'
@@ -624,42 +648,33 @@
                           style={{ width: `${currentDevice.battery}%` }}
                         ></div>
                       </div>
-                      <div className="w-[2px] h-[4px] bg-[#00ff66]/80 rounded-r-[1px] ml-[1px]"></div>
+                      <div className="w-[2px] h-[4px] bg-[#00ff66] rounded-r-[1px] ml-[1px]"></div>
                     </div>
                     <span className="text-[10px] font-bold text-emerald-300 font-mono">
                       {currentDevice.battery}%
                     </span>
-                    <span className="text-[9px] text-emerald-400/60 ml-1">• ESP32 BLE</span>
+                    <span className="text-[9px] text-emerald-300/70 ml-1">• ESP32 UWB</span>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* UPPER CONTROLS */}
+            {/* UPPER RADAR / ARROW TOGGLE */}
             <div className="flex items-center gap-2 pt-1">
               {currentDevice && (
                 <button 
                   onClick={(e) => { e.stopPropagation(); setSearchState(prev => prev === 'searching' ? 'found' : 'searching'); }}
-                  className="px-3 py-2 rounded-full ios-liquid-btn text-[11px] font-bold text-emerald-200 border border-[#00ff66]/40"
+                  className="px-3.5 py-2 rounded-full ios-liquid-btn text-[11px] font-bold text-emerald-200 border border-[#00ff66]/40"
                 >
                   {searchState === 'searching' ? "View Arrow" : "View Radar"}
                 </button>
               )}
 
-              {/* Add Device Button */}
-              <button 
-                onClick={(e) => { e.stopPropagation(); startBLEScan(); }}
-                className="w-10 h-10 rounded-full ios-liquid-btn flex items-center justify-center text-[#00ff66] shadow-lg active:scale-90"
-                title="Add TrackoVex Beacon"
-              >
-                <Icon name="plus" size={20} className="stroke-[2.5]" />
-              </button>
-
               {/* Multi-Device Pill */}
               {devices.length > 1 && (
                 <button 
                   onClick={(e) => { e.stopPropagation(); setShowDeviceDrawer(true); }}
-                  className="px-2.5 py-1.5 rounded-full ios-liquid-btn text-[11px] font-bold text-[#00ff66] flex items-center gap-1"
+                  className="px-3 py-1.5 rounded-full ios-liquid-btn text-[11px] font-bold text-[#00ff66] flex items-center gap-1"
                 >
                   <Icon name="layers" size={13} />
                   <span>{devices.length}</span>
@@ -667,142 +682,6 @@
               )}
             </div>
           </div>
-
-          {/* ========================================================
-              SIDE NAVIGATION MENU BAR
-              ======================================================== */}
-          {showSideMenu && (
-            <div 
-              onClick={(e) => { e.stopPropagation(); setShowSideMenu(false); }}
-              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex justify-start animate-fade-in"
-            >
-              <div 
-                onClick={(e) => e.stopPropagation()}
-                className="w-72 h-full ios-liquid-glass p-6 flex flex-col justify-between border-r border-[#00ff66]/30 shadow-2xl animate-slide-in"
-              >
-                <div className="space-y-6">
-                  {/* Side Menu Header */}
-                  <div className="flex items-center justify-between border-b border-[#00ff66]/20 pb-4">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-lg bg-[#00ff66]/20 border border-[#00ff66] flex items-center justify-center">
-                        <Icon name="navigation" size={18} className="text-[#00ff66]" />
-                      </div>
-                      <span className="font-extrabold text-lg text-white tracking-wide">TrackoVex</span>
-                    </div>
-                    <button 
-                      onClick={() => setShowSideMenu(false)}
-                      className="p-1 rounded-full text-emerald-300 hover:text-white"
-                    >
-                      <Icon name="x" size={20} />
-                    </button>
-                  </div>
-
-                  {/* Menu Items */}
-                  <div className="space-y-2">
-                    {/* 1. Add Button */}
-                    <button 
-                      onClick={() => { setShowSideMenu(false); startBLEScan(); }}
-                      className="w-full px-4 py-3.5 rounded-xl bg-[#00ff66]/10 hover:bg-[#00ff66]/20 border border-[#00ff66]/30 flex items-center gap-3 text-sm font-bold text-white transition-all active:scale-95"
-                    >
-                      <Icon name="plus-circle" size={18} className="text-[#00ff66]" />
-                      <span>Add Device</span>
-                    </button>
-
-                    {/* 2. Rename Button */}
-                    <button 
-                      onClick={() => { setShowSideMenu(false); openRename(currentDevice); }}
-                      className="w-full px-4 py-3.5 rounded-xl bg-[#00ff66]/10 hover:bg-[#00ff66]/20 border border-[#00ff66]/30 flex items-center gap-3 text-sm font-bold text-white transition-all active:scale-95"
-                    >
-                      <Icon name="edit-3" size={18} className="text-[#00ff66]" />
-                      <span>Rename Device</span>
-                    </button>
-
-                    {/* 3. Settings Button */}
-                    <button 
-                      onClick={() => { setShowSideMenu(false); setShowSettingsModal(true); }}
-                      className="w-full px-4 py-3.5 rounded-xl bg-[#00ff66]/10 hover:bg-[#00ff66]/20 border border-[#00ff66]/30 flex items-center gap-3 text-sm font-bold text-white transition-all active:scale-95"
-                    >
-                      <Icon name="settings" size={18} className="text-[#00ff66]" />
-                      <span>Settings</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Side Menu Footer */}
-                <div className="border-t border-[#00ff66]/20 pt-4 text-center">
-                  <p className="text-[11px] font-mono text-emerald-400">{APP_SETTINGS.appName} {APP_SETTINGS.version}</p>
-                  <p className="text-[9px] text-emerald-300/60 mt-0.5">{APP_SETTINGS.developer}</p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ========================================================
-              SETTINGS MODAL (EDITABLE VIA HTML SCRIPT CONFIG)
-              ======================================================== */}
-          {showSettingsModal && (
-            <div 
-              onClick={(e) => { e.stopPropagation(); setShowSettingsModal(false); }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/75 backdrop-blur-xl animate-fade-in"
-            >
-              <div 
-                onClick={(e) => e.stopPropagation()}
-                className="w-full max-w-md rounded-[32px] ios-liquid-glass p-6 shadow-2xl space-y-4 border border-[#00ff66]/40"
-              >
-                <div className="flex items-center justify-between border-b border-[#00ff66]/20 pb-3">
-                  <div className="flex items-center gap-2">
-                    <Icon name="sliders" size={20} className="text-[#00ff66]" />
-                    <h3 className="text-lg font-extrabold text-white">Application Settings</h3>
-                  </div>
-                  <button onClick={() => setShowSettingsModal(false)} className="p-1 text-emerald-400 hover:text-white">
-                    <Icon name="x" size={20} />
-                  </button>
-                </div>
-
-                <div className="space-y-3 text-left max-h-[60vh] overflow-y-auto pr-1">
-                  {/* About Page Details */}
-                  <div className="p-4 rounded-2xl bg-[#00ff66]/10 border border-[#00ff66]/20">
-                    <div className="text-xs font-bold text-[#00ff66] uppercase tracking-wider mb-1">About Page</div>
-                    <div className="text-sm font-bold text-white">{APP_SETTINGS.aboutTitle}</div>
-                    <p className="text-xs text-emerald-200/80 mt-1 leading-relaxed">{APP_SETTINGS.aboutDescription}</p>
-                  </div>
-
-                  {/* Version Number */}
-                  <div className="p-3.5 rounded-2xl bg-[#00ff66]/10 border border-[#00ff66]/20 flex items-center justify-between">
-                    <span className="text-xs font-semibold text-emerald-200">Version Number</span>
-                    <span className="text-xs font-mono font-bold text-[#00ff66] bg-[#00ff66]/20 px-2.5 py-1 rounded-full">
-                      {APP_SETTINGS.version}
-                    </span>
-                  </div>
-
-                  {/* Build Number */}
-                  <div className="p-3.5 rounded-2xl bg-[#00ff66]/10 border border-[#00ff66]/20 flex items-center justify-between">
-                    <span className="text-xs font-semibold text-emerald-200">Build Number</span>
-                    <span className="text-xs font-mono text-white">{APP_SETTINGS.buildNumber}</span>
-                  </div>
-
-                  {/* Hardware Module */}
-                  <div className="p-3.5 rounded-2xl bg-[#00ff66]/10 border border-[#00ff66]/20 flex items-center justify-between">
-                    <span className="text-xs font-semibold text-emerald-200">Hardware Integration</span>
-                    <span className="text-xs font-mono text-[#00ff66]">{APP_SETTINGS.hardwareVersion}</span>
-                  </div>
-
-                  {/* Developer Details */}
-                  <div className="p-3.5 rounded-2xl bg-[#00ff66]/10 border border-[#00ff66]/20 flex items-center justify-between">
-                    <span className="text-xs font-semibold text-emerald-200">Developer</span>
-                    <span className="text-xs font-bold text-white">{APP_SETTINGS.developer}</span>
-                  </div>
-                </div>
-
-                <button 
-                  onClick={() => setShowSettingsModal(false)}
-                  className="w-full py-3.5 rounded-2xl bg-[#00ff66] text-black text-xs font-extrabold shadow-lg active:scale-95 transition-all"
-                >
-                  Close Settings
-                </button>
-              </div>
-            </div>
-          )}
 
           {/* ========================================================
               CENTER CANVAS: RADAR & DIRECTION ARROW
@@ -815,14 +694,8 @@
                 </div>
                 <h2 className="text-xl font-extrabold text-white">No TrackoVex AirTag Found</h2>
                 <p className="text-xs text-emerald-200/80 max-w-xs mt-2 leading-relaxed">
-                  Power ON your Bluetooth beacon and tap the plus key or side menu to pair.
+                  Power ON your Bluetooth beacon and tap the plus key on the dock to pair.
                 </p>
-                <button 
-                  onClick={startBLEScan}
-                  className="mt-6 px-7 py-3.5 rounded-full bg-[#00ff66] text-black text-xs font-extrabold shadow-2xl active:scale-95 transition-transform"
-                >
-                  Pair TrackoVex (BLE)
-                </button>
               </div>
             )}
 
@@ -842,11 +715,11 @@
           </div>
 
           {/* ========================================================
-              BOTTOM SECTION
+              BOTTOM DISTANCE & ACTIONS READOUT
               ======================================================== */}
           {currentDevice && (
-            <div className="w-full px-8 pb-12 pt-2 z-20 flex flex-col justify-end">
-              <div className="mb-6 select-none">
+            <div className="w-full px-8 pb-32 pt-2 z-20 flex flex-col justify-end">
+              <div className="mb-2 select-none">
                 <div className="flex items-baseline gap-2">
                   <span className="text-6xl sm:text-7xl font-extrabold tracking-tight text-white font-sans">
                     {searchState === "searching" ? "11" : distanceVal}
@@ -863,28 +736,194 @@
                 )}
               </div>
 
-              {/* Bottom iOS Circular Buttons */}
-              <div className="flex items-center justify-between">
+              {/* Disconnect & Buzzer triggers */}
+              <div className="flex items-center justify-between mt-2">
                 <button 
                   onClick={handleUnpair}
-                  className="w-16 h-16 rounded-full ios-circle-btn flex items-center justify-center text-white hover:text-rose-400"
+                  className="w-12 h-12 rounded-full ios-circle-btn flex items-center justify-center text-white hover:text-rose-400"
                   title="Disconnect Device"
                 >
-                  <Icon name="x" size={26} className="stroke-[2.5]" />
+                  <Icon name="x" size={20} className="stroke-[2.5]" />
                 </button>
 
                 <button 
                   onClick={handleTriggerBottomBuzzer}
-                  className={`w-16 h-16 rounded-full ios-circle-btn flex items-center justify-center transition-all ${
+                  className={`w-12 h-12 rounded-full ios-circle-btn flex items-center justify-center transition-all ${
                     isBuzzerSounding ? 'ios-circle-btn-buzzer-active animate-buzzer-ping text-rose-300' : 'text-[#00ff66]'
                   }`}
                   title="Alert TrackoVex Buzzer (ESP32)"
                 >
                   <Icon 
                     name={isBuzzerSounding ? "bell-ring" : "volume-2"} 
-                    size={26} 
+                    size={20} 
                     className={`stroke-[2.2] ${isBuzzerSounding ? 'animate-bounce text-rose-300' : ''}`} 
                   />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================
+              FLOATING LIQUID GLASS BOTTOM DOCK
+              (Houses Add, Rename, & Settings Buttons)
+              ======================================================== */}
+          <div className="fixed bottom-6 inset-x-0 z-40 flex justify-center px-4 pointer-events-none">
+            <div className="pointer-events-auto px-6 py-3 rounded-full liquid-dock flex items-center gap-6 sm:gap-8 shadow-2xl animate-dock-bounce border border-white/50">
+              
+              {/* 1. ADD BUTTON */}
+              <button 
+                onClick={(e) => { e.stopPropagation(); startBLEScan(); }}
+                className="flex flex-col items-center gap-1 group"
+              >
+                <div className="w-12 h-12 rounded-full ios-liquid-btn flex items-center justify-center text-white group-hover:text-[#00ff66]">
+                  <Icon name="plus" size={22} className="stroke-[2.5]" />
+                </div>
+                <span className="text-[10px] font-bold text-emerald-200 group-hover:text-[#00ff66]">Add</span>
+              </button>
+
+              {/* 2. RENAME BUTTON */}
+              <button 
+                onClick={(e) => { e.stopPropagation(); openRename(currentDevice); }}
+                className="flex flex-col items-center gap-1 group"
+              >
+                <div className="w-12 h-12 rounded-full ios-liquid-btn flex items-center justify-center text-white group-hover:text-[#00ff66]">
+                  <Icon name="edit-3" size={20} className="stroke-[2.2]" />
+                </div>
+                <span className="text-[10px] font-bold text-emerald-200 group-hover:text-[#00ff66]">Rename</span>
+              </button>
+
+              {/* 3. SETTINGS BUTTON */}
+              <button 
+                onClick={(e) => { e.stopPropagation(); setShowSettingsModal(true); }}
+                className="flex flex-col items-center gap-1 group"
+              >
+                <div className="w-12 h-12 rounded-full ios-liquid-btn flex items-center justify-center text-white group-hover:text-[#00ff66]">
+                  <Icon name="settings" size={20} className="stroke-[2.2]" />
+                </div>
+                <span className="text-[10px] font-bold text-emerald-200 group-hover:text-[#00ff66]">Settings</span>
+              </button>
+
+            </div>
+          </div>
+
+          {/* ========================================================
+              APPLE iOS-STYLE SETTINGS INTERFACE (NO GRIDS)
+              ======================================================== */}
+          {showSettingsModal && (
+            <div 
+              onClick={(e) => { e.stopPropagation(); setShowSettingsModal(false); }}
+              className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 bg-black/80 backdrop-blur-2xl animate-fade-in"
+            >
+              <div 
+                onClick={(e) => e.stopPropagation()}
+                className="w-full sm:max-w-md rounded-t-[36px] sm:rounded-[36px] ios-liquid-glass p-6 shadow-2xl space-y-5 border border-white/40 max-h-[85vh] overflow-y-auto"
+              >
+                {/* Modal Title Bar */}
+                <div className="flex items-center justify-between pb-2 border-b border-white/20">
+                  <h2 className="text-xl font-extrabold text-white tracking-tight">Settings</h2>
+                  <button 
+                    onClick={() => setShowSettingsModal(false)}
+                    className="w-8 h-8 rounded-full bg-white/20 text-white flex items-center justify-center hover:bg-white/30"
+                  >
+                    <Icon name="x" size={18} />
+                  </button>
+                </div>
+
+                {/* APPLE GROUPED LIST ITEM 1: ABOUT PAGE */}
+                <div className="space-y-1.5">
+                  <div className="text-[11px] font-bold uppercase tracking-wider text-emerald-300 px-2">About Page</div>
+                  <div className="apple-settings-card p-4 space-y-2">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-xl bg-[#00ff66] text-black flex items-center justify-center font-bold">
+                        <Icon name="info" size={18} />
+                      </div>
+                      <div>
+                        <div className="text-sm font-bold text-white">{APP_SETTINGS.aboutTitle}</div>
+                        <div className="text-[11px] text-emerald-300 font-medium">Official Release</div>
+                      </div>
+                    </div>
+                    <p className="text-xs text-emerald-100/80 leading-relaxed pt-1">
+                      {APP_SETTINGS.aboutDescription}
+                    </p>
+                  </div>
+                </div>
+
+                {/* APPLE GROUPED LIST ITEM 2: SYSTEM DETAILS */}
+                <div className="space-y-1.5">
+                  <div className="text-[11px] font-bold uppercase tracking-wider text-emerald-300 px-2">System Details</div>
+                  <div className="apple-settings-card divide-y divide-white/10">
+                    
+                    {/* Version */}
+                    <div className="p-3.5 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-7 h-7 rounded-lg bg-blue-500/30 text-blue-400 flex items-center justify-center">
+                          <Icon name="cpu" size={15} />
+                        </div>
+                        <span className="text-xs font-semibold text-white">Version Number</span>
+                      </div>
+                      <span className="text-xs font-mono font-bold text-[#00ff66] bg-[#00ff66]/20 px-2.5 py-1 rounded-full border border-[#00ff66]/30">
+                        {APP_SETTINGS.version}
+                      </span>
+                    </div>
+
+                    {/* Build */}
+                    <div className="p-3.5 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-7 h-7 rounded-lg bg-purple-500/30 text-purple-300 flex items-center justify-center">
+                          <Icon name="code" size={15} />
+                        </div>
+                        <span className="text-xs font-semibold text-white">Build</span>
+                      </div>
+                      <span className="text-xs font-mono text-emerald-200">{APP_SETTINGS.buildNumber}</span>
+                    </div>
+
+                    {/* Hardware */}
+                    <div className="p-3.5 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-7 h-7 rounded-lg bg-emerald-500/30 text-[#00ff66] flex items-center justify-center">
+                          <Icon name="radio" size={15} />
+                        </div>
+                        <span className="text-xs font-semibold text-white">Hardware Protocol</span>
+                      </div>
+                      <span className="text-xs font-mono text-emerald-200">{APP_SETTINGS.hardwareVersion}</span>
+                    </div>
+
+                  </div>
+                </div>
+
+                {/* APPLE GROUPED LIST ITEM 3: DEVELOPER INFO */}
+                <div className="space-y-1.5">
+                  <div className="text-[11px] font-bold uppercase tracking-wider text-emerald-300 px-2">Developer Information</div>
+                  <div className="apple-settings-card divide-y divide-white/10">
+                    
+                    <div className="p-3.5 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-7 h-7 rounded-lg bg-amber-500/30 text-amber-300 flex items-center justify-center">
+                          <Icon name="user" size={15} />
+                        </div>
+                        <span className="text-xs font-semibold text-white">Developer</span>
+                      </div>
+                      <span className="text-xs font-bold text-white">{APP_SETTINGS.developer}</span>
+                    </div>
+
+                    <div className="p-3.5 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-7 h-7 rounded-lg bg-rose-500/30 text-rose-300 flex items-center justify-center">
+                          <Icon name="mail" size={15} />
+                        </div>
+                        <span className="text-xs font-semibold text-white">Support Email</span>
+                      </div>
+                      <span className="text-xs font-mono text-emerald-300">{APP_SETTINGS.contactEmail}</span>
+                    </div>
+
+                  </div>
+                </div>
+
+                <button 
+                  onClick={() => setShowSettingsModal(false)}
+                  className="w-full py-3.5 rounded-2xl bg-[#00ff66] text-black text-xs font-extrabold shadow-lg active:scale-95 transition-all mt-2"
+                >
+                  Done
                 </button>
               </div>
             </div>
@@ -900,7 +939,7 @@
             >
               <div 
                 onClick={(e) => e.stopPropagation()}
-                className="w-full sm:max-w-md rounded-t-[36px] sm:rounded-[36px] ios-liquid-glass p-6 shadow-2xl space-y-4 border border-[#00ff66]/30"
+                className="w-full sm:max-w-md rounded-t-[36px] sm:rounded-[36px] ios-liquid-glass p-6 shadow-2xl space-y-4 border border-[#00ff66]/40"
               >
                 <div className="flex items-center justify-between pb-1">
                   <div>
@@ -974,7 +1013,7 @@
           {isRenaming && (
             <div 
               onClick={(e) => { e.stopPropagation(); setIsRenaming(false); }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/75 backdrop-blur-xl animate-fade-in"
+              className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/80 backdrop-blur-xl animate-fade-in"
             >
               <div 
                 onClick={(e) => e.stopPropagation()}
@@ -1020,7 +1059,7 @@
           {isScanningBLE && (
             <div 
               onClick={(e) => { e.stopPropagation(); setIsScanningBLE(false); }}
-              className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 bg-black/75 backdrop-blur-xl animate-fade-in"
+              className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 bg-black/80 backdrop-blur-xl animate-fade-in"
             >
               <div 
                 onClick={(e) => e.stopPropagation()}
