@@ -16,11 +16,11 @@
           },
           colors: {
             ios: {
-              bg: '#00FF00',
-              glass: 'rgba(255, 255, 255, 0.12)',
-              glassBorder: 'rgba(255, 255, 255, 0.22)',
+              bg: '#02180a',
+              glass: 'rgba(0, 255, 102, 0.1)',
+              glassBorder: 'rgba(0, 255, 102, 0.25)',
               arrow: '#ffffff',
-              green: '#30d158',
+              green: '#00ff66',
               blue: '#0a84ff',
               gray: '#8e8e93',
               buzzer: '#ff453a'
@@ -29,7 +29,8 @@
           animation: {
             'spin-dots': 'spinDots 12s linear infinite',
             'float-disc': 'floatDisc 4s ease-in-out infinite',
-            'buzzer-ping': 'buzzerPing 0.8s ease-in-out infinite'
+            'buzzer-ping': 'buzzerPing 0.8s ease-in-out infinite',
+            'touch-ripple': 'touchRipple 0.6s ease-out forwards'
           },
           keyframes: {
             spinDots: {
@@ -43,6 +44,10 @@
             buzzerPing: {
               '0%, 100%': { transform: 'scale(1)', boxShadow: '0 0 0 0 rgba(255, 69, 58, 0.7)' },
               '50%': { transform: 'scale(1.12)', boxShadow: '0 0 30px 10px rgba(255, 69, 58, 0.5)' }
+            },
+            touchRipple: {
+              '0%': { transform: 'scale(0)', opacity: '0.8' },
+              '100%': { transform: 'scale(3.5)', opacity: '0' }
             }
           }
         }
@@ -82,13 +87,16 @@
   </script>
 
   <style>
+    /* Fullscreen Neon-Green to Dark-Green Transition Background */
     html, body {
       width: 100%;
       height: 100%;
       margin: 0;
       padding: 0;
       overflow: hidden;
-      background-color: #00FF00;
+      background: linear-gradient(145deg, #021a0b 0%, #063d19 50%, #00ff66 100%);
+      background-size: 200% 200%;
+      animation: gradientShift 10s ease infinite;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
@@ -97,54 +105,60 @@
       -webkit-user-select: none;
     }
 
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
     #root {
       width: 100vw;
       height: 100vh;
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      position: relative;
     }
 
+    /* Glassmorphism tuned for Neon Theme */
     .ios-liquid-glass {
-      background: rgba(255, 255, 255, 0.12);
+      background: rgba(4, 30, 15, 0.45);
       backdrop-filter: blur(40px) saturate(220%);
       -webkit-backdrop-filter: blur(40px) saturate(220%);
-      border: 1.5px solid rgba(255, 255, 255, 0.24);
+      border: 1.5px solid rgba(0, 255, 102, 0.3);
       box-shadow: 
-        0 20px 50px rgba(0, 0, 0, 0.1),
-        inset 0 1px 2px rgba(255, 255, 255, 0.45);
+        0 20px 50px rgba(0, 0, 0, 0.7),
+        inset 0 1px 2px rgba(0, 255, 102, 0.4);
     }
 
     .ios-liquid-btn {
-      background: rgba(255, 255, 255, 0.14);
+      background: rgba(0, 255, 102, 0.12);
       backdrop-filter: blur(28px) saturate(200%);
       -webkit-backdrop-filter: blur(28px) saturate(200%);
-      border: 1.5px solid rgba(255, 255, 255, 0.25);
+      border: 1.5px solid rgba(0, 255, 102, 0.35);
       box-shadow: 
-        0 8px 24px rgba(0, 0, 0, 0.1),
-        inset 0 1px 2px rgba(255, 255, 255, 0.4);
+        0 8px 24px rgba(0, 0, 0, 0.4),
+        inset 0 1px 2px rgba(0, 255, 102, 0.3);
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    
     .ios-liquid-btn:active {
       transform: scale(0.94);
-      background: rgba(255, 255, 255, 0.26);
+      background: rgba(0, 255, 102, 0.28);
     }
 
     .ios-circle-btn {
-      background: rgba(255, 255, 255, 0.16);
+      background: rgba(0, 255, 102, 0.15);
       backdrop-filter: blur(30px) saturate(210%);
       -webkit-backdrop-filter: blur(30px) saturate(210%);
-      border: 1.5px solid rgba(255, 255, 255, 0.26);
+      border: 1.5px solid rgba(0, 255, 102, 0.4);
       box-shadow: 
-        0 10px 30px rgba(0, 0, 0, 0.1),
-        inset 0 1px 2px rgba(255, 255, 255, 0.5);
+        0 10px 30px rgba(0, 0, 0, 0.5),
+        inset 0 1px 2px rgba(0, 255, 102, 0.5);
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    
     .ios-circle-btn:active {
       transform: scale(0.91);
-      background: rgba(255, 255, 255, 0.28);
+      background: rgba(0, 255, 102, 0.3);
     }
 
     .ios-circle-btn-buzzer-active {
@@ -156,28 +170,23 @@
     }
 
     .airtag-disc-3d {
-      background: radial-gradient(circle at 35% 35%, #ffffff 0%, #eef2f6 45%, #94a3b8 95%);
+      background: radial-gradient(circle at 35% 35%, #ffffff 0%, #dcfce7 45%, #15803d 95%);
       box-shadow: 
-        0 30px 60px -12px rgba(0, 0, 0, 0.2),
+        0 30px 60px -12px rgba(0, 0, 0, 0.7),
         inset 0 4px 7px rgba(255, 255, 255, 0.95),
-        inset 0 -5px 7px rgba(0, 0, 0, 0.35);
+        inset 0 -5px 7px rgba(0, 0, 0, 0.4);
     }
 
-    /* Screen Touch Ripple Animation Styles */
-    @keyframes rippleEffect {
-      0% { transform: scale(0); opacity: 0.8; }
-      100% { transform: scale(4); opacity: 0; }
-    }
-    
-    .touch-ripple {
+    /* Interactive Tap Animation Overlay */
+    .click-ripple {
       position: absolute;
+      width: 80px;
+      height: 80px;
+      margin-top: -40px;
+      margin-left: -40px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.6);
-      width: 60px;
-      height: 60px;
-      margin-top: -30px;
-      margin-left: -30px;
-      animation: rippleEffect 0.6s ease-out forwards;
+      border: 2px solid #00ff66;
+      box-shadow: 0 0 20px #00ff66, inset 0 0 15px #00ff66;
       pointer-events: none;
       z-index: 9999;
     }
@@ -189,6 +198,21 @@
   <script type="text/babel">
     const { useState, useEffect, useRef, useMemo } = React;
 
+    // ========================================================
+    // EDITABLE HTML CONFIGURATION / SETTINGS VALUES
+    // ========================================================
+    const APP_SETTINGS = {
+      appName: "TrackoVex",
+      version: "v2.4.0-Neon",
+      buildNumber: "2026.10.11",
+      aboutTitle: "TrackoVex - Precision ESP32 Tracking",
+      aboutDescription: "TrackoVex provides real-time Ultra-Wideband & BLE device location tracking with hardware ESP32 buzzer triggers, multi-beacon switching, and ultra-responsive direction finding.",
+      developer: "MiniProject III Team",
+      contactEmail: "support@trackovex.io",
+      hardwareVersion: "ESP32-S3 BLE 5.0"
+    };
+
+    // --- Lucide Icon Helper ---
     const Icon = ({ name, size = 20, className = "" }) => {
       const iconRef = useRef(null);
       useEffect(() => {
@@ -200,6 +224,9 @@
       return <span ref={iconRef} className={`inline-flex items-center justify-center align-middle ${className}`} style={{ width: size, height: size }}></span>;
     };
 
+    // ==========================================
+    // 1. INTRO SPLASH SCREEN
+    // ==========================================
     function IntroSplash({ onContinue }) {
       const [step, setStep] = useState(1);
       const [animatingOut, setAnimatingOut] = useState(false);
@@ -216,21 +243,21 @@
       };
 
       return (
-        <div className={`fixed inset-0 z-50 bg-[#00FF00] flex flex-col justify-between px-8 py-14 transition-all duration-700 select-none ${
+        <div className={`fixed inset-0 z-50 bg-gradient-to-br from-[#02180a] via-[#053013] to-[#00ff66]/20 flex flex-col justify-between px-8 py-14 transition-all duration-700 select-none ${
           animatingOut ? 'opacity-0 scale-125 filter blur-md pointer-events-none' : 'opacity-100 scale-100'
         }`}>
           <div className="flex justify-center pt-2">
             <div className="flex gap-2">
-              <span className={`w-2 h-2 rounded-full transition-all ${step === 1 ? 'w-6 bg-white' : 'bg-white/30'}`}></span>
-              <span className={`w-2 h-2 rounded-full transition-all ${step === 2 ? 'w-6 bg-white' : 'bg-white/30'}`}></span>
+              <span className={`w-2 h-2 rounded-full transition-all ${step === 1 ? 'w-6 bg-[#00ff66]' : 'bg-white/30'}`}></span>
+              <span className={`w-2 h-2 rounded-full transition-all ${step === 2 ? 'w-6 bg-[#00ff66]' : 'bg-white/30'}`}></span>
             </div>
           </div>
 
           <div className="flex-1 flex flex-col items-center justify-center">
             <div className="relative animate-float-disc flex items-center justify-center mb-10">
-              <div className="w-56 h-56 rounded-full p-2 bg-gradient-to-tr from-slate-300 via-white to-slate-400 shadow-[0_25px_60px_rgba(0,0,0,0.15)] flex items-center justify-center">
+              <div className="w-56 h-56 rounded-full p-2 bg-gradient-to-tr from-[#00ff66] via-white to-emerald-600 shadow-[0_25px_60px_rgba(0,255,102,0.3)] flex items-center justify-center">
                 <div className="w-full h-full rounded-full airtag-disc-3d flex items-center justify-center p-6 relative overflow-hidden">
-                  <div className="absolute inset-2 rounded-full border border-slate-300/60 pointer-events-none"></div>
+                  <div className="absolute inset-2 rounded-full border border-emerald-400/60 pointer-events-none"></div>
                   <img 
                     src="logo_black.png" 
                     alt="TrackoVex" 
@@ -241,10 +268,10 @@
             </div>
 
             <div className="text-center px-4 max-w-xs">
-              <h1 className="text-3xl font-extrabold text-white tracking-tight leading-snug drop-shadow-md">
+              <h1 className="text-3xl font-extrabold text-white tracking-tight leading-snug">
                 {step === 1 ? "Lose your knack for losing things." : "MiniProject III."}
               </h1>
-              <p className="text-sm text-white/80 mt-2 font-medium">
+              <p className="text-sm text-emerald-300/80 mt-2 font-medium">
                 TrackoVex • A Simple Solution
               </p>
             </div>
@@ -253,7 +280,7 @@
           <div className="w-full flex justify-center pb-2">
             <button 
               onClick={handleProceed}
-              className="w-full max-w-sm py-4 rounded-full bg-white text-black text-base font-bold tracking-tight shadow-xl hover:bg-slate-100 active:scale-95 transition-all"
+              className="w-full max-w-sm py-4 rounded-full bg-[#00ff66] text-black text-base font-extrabold tracking-tight shadow-xl hover:bg-emerald-300 active:scale-95 transition-all"
             >
               Continue
             </button>
@@ -262,6 +289,9 @@
       );
     }
 
+    // ==========================================
+    // 2. CANVAS RADAR RING (NEON GREEN)
+    // ==========================================
     function ParticleRadarRing() {
       const canvasRef = useRef(null);
 
@@ -295,7 +325,7 @@
           particles.forEach(p => {
             p.angle += p.speed;
             p.alpha += Math.sin(Date.now() * 0.003 * p.pulseSpeed) * 0.02;
-            const currentAlpha = Math.max(0.15, Math.min(0.95, p.alpha));
+            const currentAlpha = Math.max(0.2, Math.min(0.95, p.alpha));
 
             const currentR = baseRadius + p.radiusOffset + Math.sin(p.angle * 3) * 6;
             const x = centerX + Math.cos(p.angle) * currentR;
@@ -303,9 +333,9 @@
 
             ctx.beginPath();
             ctx.arc(x, y, p.baseSize, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(255, 255, 255, ${currentAlpha})`;
-            ctx.shadowBlur = 8;
-            ctx.shadowColor = "rgba(255, 255, 255, 0.8)";
+            ctx.fillStyle = `rgba(0, 255, 102, ${currentAlpha})`;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = "#00ff66";
             ctx.fill();
           });
 
@@ -326,31 +356,33 @@
       );
     }
 
+    // ==========================================
+    // 3. MINIMAL DIRECTION ARROW VIEW
+    // ==========================================
     function DirectionArrowView({ angle = 45 }) {
       return (
         <div className="relative flex flex-col items-center justify-center my-6">
           <div className="relative w-64 h-64 flex items-center justify-center">
-            
             <svg className="absolute w-56 h-56 pointer-events-none" viewBox="0 0 100 100">
               <path 
                 d="M 50,15 A 35,35 0 0,1 85,50" 
                 fill="none" 
-                stroke="rgba(255, 255, 255, 0.45)" 
+                stroke="rgba(0, 255, 102, 0.5)" 
                 strokeWidth="4" 
                 strokeLinecap="round" 
               />
-              <circle cx="50" cy="15" r="3.5" fill="rgba(255, 255, 255, 0.6)" />
-              <circle cx="85" cy="50" r="3.5" fill="#ffffff" />
+              <circle cx="50" cy="15" r="3.5" fill="rgba(0, 255, 102, 0.7)" />
+              <circle cx="85" cy="50" r="3.5" fill="#00ff66" />
             </svg>
 
             <div 
-              className="relative transition-transform duration-500 ease-out drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]"
+              className="relative transition-transform duration-500 ease-out"
               style={{ transform: `rotate(${angle}deg)` }}
             >
               <svg width="140" height="140" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path 
                   d="M 28,72 L 68,32 M 68,32 L 38,32 M 68,32 L 68,62" 
-                  stroke="#ffffff" 
+                  stroke="#00ff66" 
                   strokeWidth="14" 
                   strokeLinecap="round" 
                   strokeLinejoin="round" 
@@ -362,27 +394,53 @@
       );
     }
 
+    // ==========================================
+    // 4. MAIN APPLICATION COMPONENT
+    // ==========================================
     function TrackoVexApp() {
       const [showIntro, setShowIntro] = useState(true);
       const [devices, setDevices] = useState([]);
       const [activeDeviceId, setActiveDeviceId] = useState(null);
       const [searchState, setSearchState] = useState("searching");
+
       const [distanceVal, setDistanceVal] = useState(7);
       const [directionLabel, setDirectionLabel] = useState("to your right");
       const [arrowAngle, setArrowAngle] = useState(0);
+
       const [isBuzzerSounding, setIsBuzzerSounding] = useState(false);
       const [isScanningBLE, setIsScanningBLE] = useState(false);
       const [bleStatus, setBleStatus] = useState("idle");
       const [discoveredESP, setDiscoveredESP] = useState(null);
+
+      // UI Drawer & Modal States
       const [showDeviceDrawer, setShowDeviceDrawer] = useState(false);
+      const [showSideMenu, setShowSideMenu] = useState(false);
+      const [showSettingsModal, setShowSettingsModal] = useState(false);
+
+      // Renaming State
       const [isRenaming, setIsRenaming] = useState(false);
       const [renameInput, setRenameInput] = useState("");
-      const [toastMsg, setToastMsg] = useState(null);
+
+      // Screen Click / Touch Ripple State
       const [ripples, setRipples] = useState([]);
+
+      // Toast Notification
+      const [toastMsg, setToastMsg] = useState(null);
 
       const notify = (msg) => {
         setToastMsg(msg);
         setTimeout(() => setToastMsg(null), 3000);
+      };
+
+      // Screen Ripple Effect on Press
+      const handleGlobalClick = (e) => {
+        const x = e.clientX;
+        const y = e.clientY;
+        const id = Date.now();
+        setRipples(prev => [...prev, { id, x, y }]);
+        setTimeout(() => {
+          setRipples(prev => prev.filter(r => r.id !== id));
+        }, 600);
       };
 
       const currentDevice = useMemo(() => {
@@ -392,7 +450,7 @@
       const handleTriggerBottomBuzzer = () => {
         setIsBuzzerSounding(true);
         window.triggerESP32BuzzerAlarm();
-        notify(` Buzzer Sounding on ${currentDevice?.name || "TrackoVex"} (ESP32)!`);
+        notify(`🚨 Buzzer Sounding on ${currentDevice?.name || "TrackoVex"}!`);
         setTimeout(() => setIsBuzzerSounding(false), 2200);
       };
 
@@ -477,6 +535,10 @@
       };
 
       const openRename = (dev) => {
+        if (!dev) {
+          notify("No active device to rename!");
+          return;
+        }
         setRenameInput(dev.name);
         setIsRenaming(true);
       };
@@ -497,51 +559,527 @@
         notify(`Removed "${currentDevice.name}"`);
       };
 
-      // Screen Touch Animation Handler
-      const handleScreenTouch = (e) => {
-        const x = e.clientX || (e.touches && e.touches[0].clientX);
-        const y = e.clientY || (e.touches && e.touches[0].clientY);
-        
-        if (x === undefined || y === undefined) return;
-
-        const newRipple = { id: Date.now(), x, y };
-        setRipples(prev => [...prev, newRipple]);
-
-        setTimeout(() => {
-          setRipples(prev => prev.filter(r => r.id !== newRipple.id));
-        }, 600);
-      };
-
       return (
         <div 
-          onPointerDown={handleScreenTouch}
-          className="relative w-screen h-screen flex flex-col bg-[#00FF00] text-white overflow-hidden select-none font-sans"
+          onClick={handleGlobalClick}
+          className="relative w-screen h-screen flex flex-col overflow-hidden select-none font-sans"
         >
-          {/* Render Touch Ripples */}
-          {ripples.map(ripple => (
+          {/* CLICK / TOUCH RIPPLE ANIMATIONS */}
+          {ripples.map(r => (
             <div 
-              key={ripple.id} 
-              className="touch-ripple"
-              style={{ left: ripple.x, top: ripple.y }}
+              key={r.id} 
+              className="click-ripple animate-touch-ripple" 
+              style={{ top: r.y, left: r.x }}
             />
           ))}
 
+          {/* Intro Splash */}
           {showIntro && (
             <IntroSplash onContinue={() => setShowIntro(false)} />
           )}
 
+          {/* Toast Notification */}
           {toastMsg && (
             <div className="fixed top-6 inset-x-6 z-50 flex items-center justify-center pointer-events-none">
-              <div className="px-5 py-2.5 rounded-full ios-liquid-glass shadow-2xl text-white text-xs font-semibold flex items-center gap-2 animate-bounce">
-                <span className="w-2 h-2 rounded-full bg-emerald-100 animate-ping"></span>
+              <div className="px-5 py-2.5 rounded-full ios-liquid-glass text-[#00ff66] text-xs font-bold flex items-center gap-2 animate-bounce border border-[#00ff66]/40">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#00ff66] animate-ping"></span>
                 <span>{toastMsg}</span>
               </div>
             </div>
           )}
 
+          {/* ========================================================
+              TOP HEADER BAR WITH SIDE MENU TOGGLE & BRANDING
+              ======================================================== */}
           <div className="w-full pt-12 px-6 pb-3 flex items-start justify-between z-20">
             <div className="flex items-center gap-3">
-              <img 
-                src="logo_t.jpeg" 
-         
+              {/* SIDE MENU TRIGGER BUTTON */}
+              <button 
+                onClick={(e) => { e.stopPropagation(); setShowSideMenu(true); }}
+                className="w-10 h-10 rounded-full ios-liquid-btn flex items-center justify-center text-[#00ff66] hover:text-white shadow-lg active:scale-90"
+                title="Open Side Menu"
+              >
+                <Icon name="menu" size={20} className="stroke-[2.5]" />
+              </button>
 
+              <div className="flex flex-col">
+                <div className="text-[10px] font-extrabold uppercase tracking-widest text-[#00ff66]/80 font-sans">
+                  {currentDevice ? (searchState === "searching" ? "FINDING" : "NEARBY") : "TRACKOVEX"}
+                </div>
+
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white font-sans truncate max-w-[140px] sm:max-w-xs">
+                    {currentDevice ? currentDevice.name : "No Beacon Paired"}
+                  </h1>
+                </div>
+
+                {currentDevice && (
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <div className="relative flex items-center">
+                      <div className="w-5 h-2.5 rounded-[3px] border border-[#00ff66]/80 p-[1px] flex items-center">
+                        <div 
+                          className={`h-full rounded-[1px] transition-all duration-500 ${
+                            currentDevice.battery > 20 ? 'bg-[#00ff66]' : 'bg-[#ff453a]'
+                          }`}
+                          style={{ width: `${currentDevice.battery}%` }}
+                        ></div>
+                      </div>
+                      <div className="w-[2px] h-[4px] bg-[#00ff66]/80 rounded-r-[1px] ml-[1px]"></div>
+                    </div>
+                    <span className="text-[10px] font-bold text-emerald-300 font-mono">
+                      {currentDevice.battery}%
+                    </span>
+                    <span className="text-[9px] text-emerald-400/60 ml-1">• ESP32 BLE</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* UPPER CONTROLS */}
+            <div className="flex items-center gap-2 pt-1">
+              {currentDevice && (
+                <button 
+                  onClick={(e) => { e.stopPropagation(); setSearchState(prev => prev === 'searching' ? 'found' : 'searching'); }}
+                  className="px-3 py-2 rounded-full ios-liquid-btn text-[11px] font-bold text-emerald-200 border border-[#00ff66]/40"
+                >
+                  {searchState === 'searching' ? "View Arrow" : "View Radar"}
+                </button>
+              )}
+
+              {/* Add Device Button */}
+              <button 
+                onClick={(e) => { e.stopPropagation(); startBLEScan(); }}
+                className="w-10 h-10 rounded-full ios-liquid-btn flex items-center justify-center text-[#00ff66] shadow-lg active:scale-90"
+                title="Add TrackoVex Beacon"
+              >
+                <Icon name="plus" size={20} className="stroke-[2.5]" />
+              </button>
+
+              {/* Multi-Device Pill */}
+              {devices.length > 1 && (
+                <button 
+                  onClick={(e) => { e.stopPropagation(); setShowDeviceDrawer(true); }}
+                  className="px-2.5 py-1.5 rounded-full ios-liquid-btn text-[11px] font-bold text-[#00ff66] flex items-center gap-1"
+                >
+                  <Icon name="layers" size={13} />
+                  <span>{devices.length}</span>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* ========================================================
+              SIDE NAVIGATION MENU BAR
+              ======================================================== */}
+          {showSideMenu && (
+            <div 
+              onClick={(e) => { e.stopPropagation(); setShowSideMenu(false); }}
+              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex justify-start animate-fade-in"
+            >
+              <div 
+                onClick={(e) => e.stopPropagation()}
+                className="w-72 h-full ios-liquid-glass p-6 flex flex-col justify-between border-r border-[#00ff66]/30 shadow-2xl animate-slide-in"
+              >
+                <div className="space-y-6">
+                  {/* Side Menu Header */}
+                  <div className="flex items-center justify-between border-b border-[#00ff66]/20 pb-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-[#00ff66]/20 border border-[#00ff66] flex items-center justify-center">
+                        <Icon name="navigation" size={18} className="text-[#00ff66]" />
+                      </div>
+                      <span className="font-extrabold text-lg text-white tracking-wide">TrackoVex</span>
+                    </div>
+                    <button 
+                      onClick={() => setShowSideMenu(false)}
+                      className="p-1 rounded-full text-emerald-300 hover:text-white"
+                    >
+                      <Icon name="x" size={20} />
+                    </button>
+                  </div>
+
+                  {/* Menu Items */}
+                  <div className="space-y-2">
+                    {/* 1. Add Button */}
+                    <button 
+                      onClick={() => { setShowSideMenu(false); startBLEScan(); }}
+                      className="w-full px-4 py-3.5 rounded-xl bg-[#00ff66]/10 hover:bg-[#00ff66]/20 border border-[#00ff66]/30 flex items-center gap-3 text-sm font-bold text-white transition-all active:scale-95"
+                    >
+                      <Icon name="plus-circle" size={18} className="text-[#00ff66]" />
+                      <span>Add Device</span>
+                    </button>
+
+                    {/* 2. Rename Button */}
+                    <button 
+                      onClick={() => { setShowSideMenu(false); openRename(currentDevice); }}
+                      className="w-full px-4 py-3.5 rounded-xl bg-[#00ff66]/10 hover:bg-[#00ff66]/20 border border-[#00ff66]/30 flex items-center gap-3 text-sm font-bold text-white transition-all active:scale-95"
+                    >
+                      <Icon name="edit-3" size={18} className="text-[#00ff66]" />
+                      <span>Rename Device</span>
+                    </button>
+
+                    {/* 3. Settings Button */}
+                    <button 
+                      onClick={() => { setShowSideMenu(false); setShowSettingsModal(true); }}
+                      className="w-full px-4 py-3.5 rounded-xl bg-[#00ff66]/10 hover:bg-[#00ff66]/20 border border-[#00ff66]/30 flex items-center gap-3 text-sm font-bold text-white transition-all active:scale-95"
+                    >
+                      <Icon name="settings" size={18} className="text-[#00ff66]" />
+                      <span>Settings</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Side Menu Footer */}
+                <div className="border-t border-[#00ff66]/20 pt-4 text-center">
+                  <p className="text-[11px] font-mono text-emerald-400">{APP_SETTINGS.appName} {APP_SETTINGS.version}</p>
+                  <p className="text-[9px] text-emerald-300/60 mt-0.5">{APP_SETTINGS.developer}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================
+              SETTINGS MODAL (EDITABLE VIA HTML SCRIPT CONFIG)
+              ======================================================== */}
+          {showSettingsModal && (
+            <div 
+              onClick={(e) => { e.stopPropagation(); setShowSettingsModal(false); }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/75 backdrop-blur-xl animate-fade-in"
+            >
+              <div 
+                onClick={(e) => e.stopPropagation()}
+                className="w-full max-w-md rounded-[32px] ios-liquid-glass p-6 shadow-2xl space-y-4 border border-[#00ff66]/40"
+              >
+                <div className="flex items-center justify-between border-b border-[#00ff66]/20 pb-3">
+                  <div className="flex items-center gap-2">
+                    <Icon name="sliders" size={20} className="text-[#00ff66]" />
+                    <h3 className="text-lg font-extrabold text-white">Application Settings</h3>
+                  </div>
+                  <button onClick={() => setShowSettingsModal(false)} className="p-1 text-emerald-400 hover:text-white">
+                    <Icon name="x" size={20} />
+                  </button>
+                </div>
+
+                <div className="space-y-3 text-left max-h-[60vh] overflow-y-auto pr-1">
+                  {/* About Page Details */}
+                  <div className="p-4 rounded-2xl bg-[#00ff66]/10 border border-[#00ff66]/20">
+                    <div className="text-xs font-bold text-[#00ff66] uppercase tracking-wider mb-1">About Page</div>
+                    <div className="text-sm font-bold text-white">{APP_SETTINGS.aboutTitle}</div>
+                    <p className="text-xs text-emerald-200/80 mt-1 leading-relaxed">{APP_SETTINGS.aboutDescription}</p>
+                  </div>
+
+                  {/* Version Number */}
+                  <div className="p-3.5 rounded-2xl bg-[#00ff66]/10 border border-[#00ff66]/20 flex items-center justify-between">
+                    <span className="text-xs font-semibold text-emerald-200">Version Number</span>
+                    <span className="text-xs font-mono font-bold text-[#00ff66] bg-[#00ff66]/20 px-2.5 py-1 rounded-full">
+                      {APP_SETTINGS.version}
+                    </span>
+                  </div>
+
+                  {/* Build Number */}
+                  <div className="p-3.5 rounded-2xl bg-[#00ff66]/10 border border-[#00ff66]/20 flex items-center justify-between">
+                    <span className="text-xs font-semibold text-emerald-200">Build Number</span>
+                    <span className="text-xs font-mono text-white">{APP_SETTINGS.buildNumber}</span>
+                  </div>
+
+                  {/* Hardware Module */}
+                  <div className="p-3.5 rounded-2xl bg-[#00ff66]/10 border border-[#00ff66]/20 flex items-center justify-between">
+                    <span className="text-xs font-semibold text-emerald-200">Hardware Integration</span>
+                    <span className="text-xs font-mono text-[#00ff66]">{APP_SETTINGS.hardwareVersion}</span>
+                  </div>
+
+                  {/* Developer Details */}
+                  <div className="p-3.5 rounded-2xl bg-[#00ff66]/10 border border-[#00ff66]/20 flex items-center justify-between">
+                    <span className="text-xs font-semibold text-emerald-200">Developer</span>
+                    <span className="text-xs font-bold text-white">{APP_SETTINGS.developer}</span>
+                  </div>
+                </div>
+
+                <button 
+                  onClick={() => setShowSettingsModal(false)}
+                  className="w-full py-3.5 rounded-2xl bg-[#00ff66] text-black text-xs font-extrabold shadow-lg active:scale-95 transition-all"
+                >
+                  Close Settings
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================
+              CENTER CANVAS: RADAR & DIRECTION ARROW
+              ======================================================== */}
+          <div className="flex-1 w-full flex flex-col items-center justify-center relative px-6 z-10">
+            {!currentDevice && (
+              <div className="flex flex-col items-center justify-center text-center p-8">
+                <div className="w-24 h-24 rounded-full ios-liquid-glass flex items-center justify-center mb-6 shadow-2xl border border-[#00ff66]">
+                  <Icon name="bluetooth" size={38} className="text-[#00ff66]" />
+                </div>
+                <h2 className="text-xl font-extrabold text-white">No TrackoVex AirTag Found</h2>
+                <p className="text-xs text-emerald-200/80 max-w-xs mt-2 leading-relaxed">
+                  Power ON your Bluetooth beacon and tap the plus key or side menu to pair.
+                </p>
+                <button 
+                  onClick={startBLEScan}
+                  className="mt-6 px-7 py-3.5 rounded-full bg-[#00ff66] text-black text-xs font-extrabold shadow-2xl active:scale-95 transition-transform"
+                >
+                  Pair TrackoVex (BLE)
+                </button>
+              </div>
+            )}
+
+            {currentDevice && (
+              <div className="w-full flex flex-col items-center justify-center">
+                {searchState === "searching" ? (
+                  <div className="flex flex-col items-center justify-center">
+                    <ParticleRadarRing />
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center">
+                    <DirectionArrowView angle={arrowAngle} />
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* ========================================================
+              BOTTOM SECTION
+              ======================================================== */}
+          {currentDevice && (
+            <div className="w-full px-8 pb-12 pt-2 z-20 flex flex-col justify-end">
+              <div className="mb-6 select-none">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-6xl sm:text-7xl font-extrabold tracking-tight text-white font-sans">
+                    {searchState === "searching" ? "11" : distanceVal}
+                  </span>
+                  <span className="text-4xl sm:text-5xl font-light text-emerald-300 font-sans">
+                    ft
+                  </span>
+                </div>
+
+                {searchState === "found" && (
+                  <div className="text-2xl sm:text-3xl font-normal text-emerald-200/90 tracking-tight mt-0.5 font-sans">
+                    to your <span className="text-[#00ff66] font-bold">{directionLabel.replace("to your ", "")}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Bottom iOS Circular Buttons */}
+              <div className="flex items-center justify-between">
+                <button 
+                  onClick={handleUnpair}
+                  className="w-16 h-16 rounded-full ios-circle-btn flex items-center justify-center text-white hover:text-rose-400"
+                  title="Disconnect Device"
+                >
+                  <Icon name="x" size={26} className="stroke-[2.5]" />
+                </button>
+
+                <button 
+                  onClick={handleTriggerBottomBuzzer}
+                  className={`w-16 h-16 rounded-full ios-circle-btn flex items-center justify-center transition-all ${
+                    isBuzzerSounding ? 'ios-circle-btn-buzzer-active animate-buzzer-ping text-rose-300' : 'text-[#00ff66]'
+                  }`}
+                  title="Alert TrackoVex Buzzer (ESP32)"
+                >
+                  <Icon 
+                    name={isBuzzerSounding ? "bell-ring" : "volume-2"} 
+                    size={26} 
+                    className={`stroke-[2.2] ${isBuzzerSounding ? 'animate-bounce text-rose-300' : ''}`} 
+                  />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================
+              DRAWER: MULTI-DEVICE SWITCHER
+              ======================================================== */}
+          {showDeviceDrawer && (
+            <div 
+              onClick={(e) => { e.stopPropagation(); setShowDeviceDrawer(false); }}
+              className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:p-6 bg-black/80 backdrop-blur-xl animate-fade-in"
+            >
+              <div 
+                onClick={(e) => e.stopPropagation()}
+                className="w-full sm:max-w-md rounded-t-[36px] sm:rounded-[36px] ios-liquid-glass p-6 shadow-2xl space-y-4 border border-[#00ff66]/30"
+              >
+                <div className="flex items-center justify-between pb-1">
+                  <div>
+                    <h3 className="text-lg font-extrabold text-white">Active TrackoVex Devices</h3>
+                    <p className="text-xs text-emerald-300/70">Switch focus between connected beacons</p>
+                  </div>
+                  <button onClick={() => setShowDeviceDrawer(false)} className="p-1 text-emerald-300 hover:text-white">
+                    <Icon name="x" size={20} />
+                  </button>
+                </div>
+
+                <div className="space-y-2.5 max-h-60 overflow-y-auto">
+                  {devices.map(dev => {
+                    const isActive = dev.id === currentDevice?.id;
+                    return (
+                      <div 
+                        key={dev.id}
+                        onClick={() => {
+                          setActiveDeviceId(dev.id);
+                          setShowDeviceDrawer(false);
+                          notify(`Switched focus to ${dev.name}`);
+                        }}
+                        className={`p-3.5 rounded-2xl flex items-center justify-between cursor-pointer transition-all border ${
+                          isActive 
+                            ? 'bg-[#00ff66]/20 border-[#00ff66] shadow-md' 
+                            : 'bg-white/5 border-white/10 hover:bg-white/10'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                            isActive ? 'bg-[#00ff66] text-black' : 'bg-white/10 text-neutral-300'
+                          }`}>
+                            <Icon name="radio" size={18} />
+                          </div>
+                          <div>
+                            <div className="text-sm font-bold text-white flex items-center gap-2">
+                              <span>{dev.name}</span>
+                              {isActive && <span className="w-2 h-2 rounded-full bg-[#00ff66]"></span>}
+                            </div>
+                            <div className="text-[11px] text-emerald-300/80 font-mono">Battery: {dev.battery}%</div>
+                          </div>
+                        </div>
+
+                        <div className="text-right">
+                          <span className={`text-xs font-semibold ${isActive ? 'text-[#00ff66]' : 'text-neutral-400'}`}>
+                            {isActive ? "Active" : "Select"}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <button 
+                  onClick={() => {
+                    setShowDeviceDrawer(false);
+                    startBLEScan();
+                  }}
+                  className="w-full py-3.5 rounded-2xl bg-[#00ff66] text-black text-xs font-extrabold shadow-lg flex items-center justify-center gap-2"
+                >
+                  <Icon name="plus" size={16} />
+                  <span>Pair Another TrackoVex</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================
+              MODAL: RENAME DEVICE
+              ======================================================== */}
+          {isRenaming && (
+            <div 
+              onClick={(e) => { e.stopPropagation(); setIsRenaming(false); }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/75 backdrop-blur-xl animate-fade-in"
+            >
+              <div 
+                onClick={(e) => e.stopPropagation()}
+                className="w-full max-w-sm rounded-[32px] ios-liquid-glass p-7 shadow-2xl space-y-4 border border-[#00ff66]/40"
+              >
+                <div className="text-center">
+                  <h3 className="text-xl font-extrabold text-white">Rename TrackoVex</h3>
+                  <p className="text-xs text-emerald-200/80 mt-1">Customize device label</p>
+                </div>
+
+                <div>
+                  <input 
+                    type="text"
+                    value={renameInput}
+                    onChange={(e) => setRenameInput(e.target.value)}
+                    placeholder="e.g. Camera, Keys, Wallet"
+                    autoFocus
+                    className="w-full px-4 py-3.5 rounded-2xl bg-[#00ff66]/10 border border-[#00ff66]/40 text-white text-base font-semibold focus:outline-none focus:ring-2 focus:ring-[#00ff66]"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 pt-2">
+                  <button 
+                    onClick={() => setIsRenaming(false)}
+                    className="py-3 rounded-2xl bg-white/10 text-white text-xs font-bold hover:bg-white/20"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    onClick={saveRename}
+                    className="py-3 rounded-2xl bg-[#00ff66] text-black text-xs font-extrabold shadow-lg active:scale-95 transition-all"
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================
+              MODAL: ESP32 BLUETOOTH PAIRING
+              ======================================================== */}
+          {isScanningBLE && (
+            <div 
+              onClick={(e) => { e.stopPropagation(); setIsScanningBLE(false); }}
+              className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 bg-black/75 backdrop-blur-xl animate-fade-in"
+            >
+              <div 
+                onClick={(e) => e.stopPropagation()}
+                className="w-full sm:max-w-sm rounded-t-[36px] sm:rounded-[36px] ios-liquid-glass p-7 shadow-2xl space-y-5 border border-[#00ff66]/40"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Icon name="bluetooth" size={22} className="text-[#00ff66]" />
+                    <h3 className="text-lg font-extrabold text-white">Pair TrackoVex BLE</h3>
+                  </div>
+                  <button onClick={() => setIsScanningBLE(false)} className="p-1 text-emerald-300 hover:text-white">
+                    <Icon name="x" size={20} />
+                  </button>
+                </div>
+
+                {bleStatus === "scanning" && (
+                  <div className="py-8 flex flex-col items-center text-center">
+                    <div className="w-16 h-16 rounded-full bg-[#00ff66]/20 text-[#00ff66] flex items-center justify-center mb-3 animate-spin">
+                      <Icon name="radio" size={30} />
+                    </div>
+                    <p className="text-sm font-bold text-white">Listening for Bluetooth Signals...</p>
+                    <p className="text-xs text-emerald-200/80 mt-1">Ensure your TrackoVex is nearby</p>
+                  </div>
+                )}
+
+                {bleStatus === "discovered" && discoveredESP && (
+                  <div className="space-y-4">
+                    <div className="p-4 rounded-2xl bg-[#00ff66]/10 border border-[#00ff66]/30 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-[#00ff66] text-black flex items-center justify-center">
+                          <Icon name="cpu" size={20} />
+                        </div>
+                        <div>
+                          <div className="text-sm font-bold text-white">{discoveredESP.rawName}</div>
+                          <div className="text-[11px] text-emerald-300 font-mono">Battery: {discoveredESP.battery}%</div>
+                        </div>
+                      </div>
+                      <span className="text-xs font-mono font-bold text-[#00ff66]">{discoveredESP.rssi}</span>
+                    </div>
+
+                    <button 
+                      onClick={confirmPairDevice}
+                      className="w-full py-4 rounded-2xl bg-[#00ff66] text-black text-xs font-extrabold shadow-xl active:scale-95 transition-all"
+                    >
+                      Connect & Begin Tracking
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+        </div>
+      );
+    }
+
+    // Mount Application
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<TrackoVexApp />);
+  </script>
+</body>
+</html>
