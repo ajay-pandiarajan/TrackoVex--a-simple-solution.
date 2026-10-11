@@ -16,25 +16,22 @@
           },
           colors: {
             ios: {
-              green: '#15c059', // Apple-style finding green
+              green: '#15c059',
               gray: '#8e8e93',
+              lightGray: '#f2f2f7'
             }
           },
           animation: {
             'float-tag': 'floatTag 2s infinite ease-in-out',
-            'pulse-ring': 'pulseRing 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite',
             'dock-bounce': 'dockBounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
             'check-draw': 'checkDraw 0.4s ease-out forwards',
-            'fade-in': 'fadeIn 0.3s ease-out forwards'
+            'fade-in': 'fadeIn 0.3s ease-out forwards',
+            'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
           },
           keyframes: {
             floatTag: {
               '0%, 100%': { transform: 'translateY(0px) translateX(0px)' },
               '50%': { transform: 'translateY(-15px) translateX(-10px)' }
-            },
-            pulseRing: {
-              '0%': { transform: 'scale(0.8)', opacity: '1' },
-              '100%': { transform: 'scale(3)', opacity: '0' }
             },
             dockBounce: {
               '0%': { transform: 'scale(0.85) translateY(20px)', opacity: '0' },
@@ -47,6 +44,10 @@
             fadeIn: {
               '0%': { opacity: '0' },
               '100%': { opacity: '1' }
+            },
+            slideUp: {
+              '0%': { transform: 'translateY(100%)' },
+              '100%': { transform: 'translateY(0)' }
             }
           }
         }
@@ -111,9 +112,9 @@
       position: relative;
     }
 
-    /* HIGH-GLOSS LIQUID GLASS STYLING (Light Theme adapted from images) */
+    /* HIGH-GLOSS LIQUID GLASS STYLING */
     .ios-liquid-glass {
-      background: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.6);
       backdrop-filter: blur(40px) saturate(180%);
       -webkit-backdrop-filter: blur(40px) saturate(180%);
       border: 1px solid rgba(255, 255, 255, 0.8);
@@ -125,7 +126,7 @@
     }
 
     .liquid-dock {
-      background: rgba(240, 240, 245, 0.5);
+      background: rgba(240, 240, 245, 0.7);
       backdrop-filter: blur(45px) saturate(200%);
       -webkit-backdrop-filter: blur(45px) saturate(200%);
       border: 1px solid rgba(255, 255, 255, 0.6);
@@ -135,53 +136,14 @@
         inset 0 1.5px 2px rgba(255, 255, 255, 0.9);
     }
 
-    .ios-liquid-btn {
-      background: rgba(255, 255, 255, 0.5);
-      backdrop-filter: blur(25px) saturate(150%);
-      -webkit-backdrop-filter: blur(25px) saturate(150%);
-      border: 1px solid rgba(255, 255, 255, 0.7);
-      box-shadow: 
-        0 4px 15px rgba(0, 0, 0, 0.05),
-        inset 0 1px 2px rgba(255, 255, 255, 0.8);
-      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    .ios-liquid-btn:active {
-      transform: scale(0.90);
-      background: rgba(230, 230, 230, 0.6);
-    }
-
-    .ios-circle-btn {
-      background: rgba(255, 255, 255, 0.6);
-      backdrop-filter: blur(30px) saturate(180%);
-      -webkit-backdrop-filter: blur(30px) saturate(180%);
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      box-shadow: 
-        0 8px 25px rgba(0, 0, 0, 0.08),
-        inset 0 1px 2px rgba(255, 255, 255, 1);
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .ios-circle-btn:active {
-      transform: scale(0.91);
-      background: rgba(230, 230, 230, 0.8);
-    }
-
-    .ios-circle-btn-buzzer-active {
-      background: rgba(255, 69, 58, 0.1) !important;
-      border: 1px solid rgba(255, 69, 58, 0.5) !important;
-      color: #ff453a !important;
-    }
-
-    /* Apple-style grouped settings list card */
     .apple-settings-card {
-      background: rgba(255, 255, 255, 0.6);
-      backdrop-filter: blur(25px);
-      -webkit-backdrop-filter: blur(25px);
-      border: 1px solid rgba(200, 200, 205, 0.4);
-      border-radius: 18px;
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      border-radius: 12px;
       overflow: hidden;
     }
 
-    /* Continue Button Morph Animation */
+    /* Morphing Continue Button */
     .btn-morph-container {
       position: relative;
       height: 56px;
@@ -239,17 +201,20 @@
     .btn-morph.success .check-path {
       animation: checkDraw 0.4s 0.2s ease-out forwards;
     }
-    
-    /* Expanding Ring Radar Animation */
-    .radar-ring {
-      position: absolute;
-      border-radius: 50%;
-      background: rgba(21, 192, 89, 0.15);
-      animation: pulseRing 2.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
-    }
-    .radar-ring:nth-child(2) { animation-delay: 0.8s; }
-    .radar-ring:nth-child(3) { animation-delay: 1.6s; }
 
+    /* iOS Loading Spinner */
+    .ios-spinner {
+      border: 3px solid rgba(0, 0, 0, 0.1);
+      border-top: 3px solid #000000;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
@@ -263,7 +228,7 @@
       version: "v3.0 Liquid",
       buildNumber: "2026.10.12",
       aboutTitle: "TrackoVex Precision Beacon",
-      aboutDescription: "TrackoVex provides real-time Ultra-Wideband & BLE device location tracking with hardware ESP32 buzzer triggers.",
+      aboutDescription: "TrackoVex provides real-time Ultra-Wideband & BLE device location tracking with hardware ESP32 buzzer triggers. Developed to ensure you never lose track of your most valuable items.",
       developer: "MiniProject III Team",
       contactEmail: "support@trackovex.io",
       hardwareVersion: "ESP32-S3 Ultra-wideband 5.0"
@@ -281,10 +246,10 @@
     };
 
     // ==========================================
-    // 1. INTRO SPLASH WITH MORPHING BUTTON
+    // INTRO SPLASH
     // ==========================================
     function IntroSplash({ onContinue }) {
-      const [btnState, setBtnState] = useState('idle'); // idle, loading, success
+      const [btnState, setBtnState] = useState('idle');
 
       const handleProceed = () => {
         if (btnState !== 'idle') return;
@@ -327,23 +292,7 @@
     }
 
     // ==========================================
-    // 2. EXPANDING GREEN RING RADAR
-    // ==========================================
-    function RadarRings() {
-      return (
-        <div className="relative flex items-center justify-center w-64 h-64">
-          <div className="radar-ring w-24 h-24"></div>
-          <div className="radar-ring w-24 h-24"></div>
-          <div className="radar-ring w-24 h-24"></div>
-          <div className="z-10 w-32 h-32 rounded-full bg-white shadow-[0_0_40px_rgba(21,192,89,0.3)] flex items-center justify-center border border-gray-100">
-             <Icon name="radio" size={40} className="text-ios-green" />
-          </div>
-        </div>
-      );
-    }
-
-    // ==========================================
-    // 3. DIRECTION ARROW VIEW
+    // DIRECTION ARROW VIEW
     // ==========================================
     function DirectionArrowView({ angle = 45 }) {
       return (
@@ -370,22 +319,26 @@
     }
 
     // ==========================================
-    // 4. MAIN APPLICATION COMPONENT
+    // MAIN APP COMPONENT
     // ==========================================
     function TrackoVexApp() {
       const [showIntro, setShowIntro] = useState(true);
       const [devices, setDevices] = useState([]);
       const [activeDeviceId, setActiveDeviceId] = useState(null);
-      const [searchState, setSearchState] = useState("searching");
 
       const [distanceVal, setDistanceVal] = useState(7);
       const [directionLabel, setDirectionLabel] = useState("to your right");
       const [arrowAngle, setArrowAngle] = useState(0);
 
       const [isBuzzerSounding, setIsBuzzerSounding] = useState(false);
-      const [isScanningBLE, setIsScanningBLE] = useState(false);
       
+      // Pairing Flow States
+      const [pairingStep, setPairingStep] = useState('idle'); // idle, searching, connecting, done
+      
+      // Modal States
       const [showSettingsModal, setShowSettingsModal] = useState(false);
+      const [showRenameModal, setShowRenameModal] = useState(false);
+      const [renameInput, setRenameInput] = useState("");
 
       const currentDevice = useMemo(() => {
         return devices.find(d => d.id === activeDeviceId) || devices[0] || null;
@@ -397,42 +350,56 @@
         setTimeout(() => setIsBuzzerSounding(false), 2200);
       };
 
+      // Simulated Tracking Updates
       useEffect(() => {
         if (!currentDevice) return;
         const interval = setInterval(() => {
-          if (searchState === "found") {
-            setDistanceVal(prev => {
-              const delta = (Math.random() * 2 - 1);
-              return Math.max(1, Math.round(prev + delta));
-            });
-            setArrowAngle(prev => (prev + (Math.random() * 10 - 5)));
-          }
+          setDistanceVal(prev => {
+            const delta = (Math.random() * 2 - 1);
+            return Math.max(1, Math.round(prev + delta));
+          });
+          setArrowAngle(prev => (prev + (Math.random() * 10 - 5)));
         }, 1600);
         return () => clearInterval(interval);
-      }, [currentDevice, searchState]);
+      }, [currentDevice]);
 
-      const startBLEScan = () => {
-        setIsScanningBLE(true);
+      // Video-referenced Pairing Flow
+      const startPairingFlow = () => {
+        setPairingStep('searching');
         setTimeout(() => {
-          const newDevice = {
-            id: `ESP32-${Date.now()}`,
-            name: "Keys",
-            battery: 100,
-          };
-          setDevices(prev => [...prev, newDevice]);
-          setActiveDeviceId(newDevice.id);
-          setIsScanningBLE(false);
-          setSearchState("searching");
-
+          setPairingStep('connecting');
           setTimeout(() => {
-            setSearchState("found");
-            setDistanceVal(6);
+            setPairingStep('done');
           }, 3000);
-        }, 3500); // Simulate pairing delay
+        }, 4000); 
       };
 
-      // Dynamic background based on tracking state
-      const isFinding = currentDevice && searchState === "found";
+      const finishPairing = () => {
+        const newDevice = {
+          id: `ESP32-${Date.now()}`,
+          name: "TrackoVex Tag",
+          battery: 100,
+        };
+        setDevices(prev => [...prev, newDevice]);
+        setActiveDeviceId(newDevice.id);
+        setPairingStep('idle');
+        setDistanceVal(6);
+      };
+
+      // Rename Logic
+      const openRename = () => {
+        if (!currentDevice) return;
+        setRenameInput(currentDevice.name);
+        setShowRenameModal(true);
+      };
+
+      const saveRename = () => {
+        if (!renameInput.trim() || !currentDevice) return;
+        setDevices(prev => prev.map(d => d.id === currentDevice.id ? { ...d, name: renameInput.trim() } : d));
+        setShowRenameModal(false);
+      };
+
+      const isFinding = !!currentDevice;
       const bgClass = isFinding ? "bg-ios-green transition-colors duration-1000" : "bg-white transition-colors duration-1000";
       const textColor = isFinding ? "text-white" : "text-black";
       const subTextColor = isFinding ? "text-white/80" : "text-gray-500";
@@ -454,15 +421,6 @@
                 {currentDevice ? currentDevice.name : "No Device"}
               </h1>
             </div>
-            
-            {currentDevice && (
-              <button 
-                onClick={() => setSearchState(prev => prev === 'searching' ? 'found' : 'searching')}
-                className={`px-4 py-2 rounded-full text-[13px] font-semibold backdrop-blur-md border ${isFinding ? 'bg-white/20 border-white/40 text-white' : 'bg-black/5 border-black/10 text-black'}`}
-              >
-                {searchState === 'searching' ? "View Arrow" : "View Radar"}
-              </button>
-            )}
           </div>
 
           {/* CENTER CANVAS */}
@@ -473,17 +431,13 @@
                   <Icon name="bluetooth" size={32} className="text-black/40" />
                 </div>
                 <h2 className="text-xl font-bold text-black">No Item Selected</h2>
-                <p className="text-sm text-gray-500 mt-2">Tap the add button to pair an AirTag.</p>
+                <p className="text-sm text-gray-500 mt-2">Tap the add button to pair a TrackoVex.</p>
               </div>
             )}
 
             {currentDevice && (
               <div className="w-full flex flex-col items-center justify-center">
-                {searchState === "searching" ? (
-                  <RadarRings />
-                ) : (
-                  <DirectionArrowView angle={arrowAngle} />
-                )}
+                <DirectionArrowView angle={arrowAngle} />
               </div>
             )}
           </div>
@@ -494,17 +448,13 @@
               <div className="mb-4">
                 <div className="flex items-baseline gap-2">
                   <span className={`text-7xl font-bold tracking-tight ${textColor}`}>
-                    {searchState === "searching" ? "Searching" : distanceVal}
+                    {distanceVal}
                   </span>
-                  {searchState === "found" && (
-                    <span className={`text-4xl font-normal ${subTextColor}`}>ft</span>
-                  )}
+                  <span className={`text-4xl font-normal ${subTextColor}`}>ft</span>
                 </div>
-                {searchState === "found" && (
-                  <div className={`text-2xl font-normal ${subTextColor} mt-1`}>
-                    {directionLabel}
-                  </div>
-                )}
+                <div className={`text-2xl font-normal ${subTextColor} mt-1`}>
+                  {directionLabel}
+                </div>
               </div>
 
               <div className="flex items-center justify-between">
@@ -534,59 +484,152 @@
 
           {/* FLOATING LIQUID GLASS DOCK */}
           <div className="fixed bottom-8 inset-x-0 z-40 flex justify-center px-4 pointer-events-none">
-            <div className="pointer-events-auto px-6 py-4 rounded-[2rem] liquid-dock flex items-center gap-8 shadow-xl animate-dock-bounce">
+            <div className="pointer-events-auto px-8 py-4 rounded-[2rem] liquid-dock flex items-center gap-10 shadow-xl animate-dock-bounce">
               
-              <button onClick={() => startBLEScan()} className="flex flex-col items-center gap-1.5 group">
-                <Icon name="plus" size={24} className="text-black/70 group-hover:text-black" />
-                <span className="text-[10px] font-semibold text-black/60">Add</span>
+              <button onClick={() => startPairingFlow()} className="flex flex-col items-center gap-1.5 group">
+                <Icon name="plus" size={24} className="text-black/70 group-hover:text-black transition-colors" />
+                <span className="text-[10px] font-semibold text-black/60 group-hover:text-black">Add</span>
+              </button>
+
+              <button onClick={openRename} className={`flex flex-col items-center gap-1.5 group ${!currentDevice && 'opacity-40 pointer-events-none'}`}>
+                <Icon name="edit-2" size={22} className="text-black/70 group-hover:text-black transition-colors" />
+                <span className="text-[10px] font-semibold text-black/60 group-hover:text-black">Rename</span>
               </button>
 
               <button onClick={() => setShowSettingsModal(true)} className="flex flex-col items-center gap-1.5 group">
-                <Icon name="settings" size={24} className="text-black/70 group-hover:text-black" />
-                <span className="text-[10px] font-semibold text-black/60">Settings</span>
+                <Icon name="settings" size={24} className="text-black/70 group-hover:text-black transition-colors" />
+                <span className="text-[10px] font-semibold text-black/60 group-hover:text-black">Settings</span>
               </button>
 
             </div>
           </div>
 
-          {/* PAIRING MODAL (Video 1 Style) */}
-          {isScanningBLE && (
-            <div className="fixed inset-0 z-50 bg-white flex flex-col items-center justify-center p-6 animate-fade-in">
-              <h2 className="text-3xl font-bold text-black mb-2 mt-12">Searching for AirTag...</h2>
-              <p className="text-gray-500 text-center mb-16 max-w-xs">Bring it near this iPhone to start.</p>
-              
-              <div className="relative w-64 h-80 flex items-center justify-center">
-                {/* Phone silhouette */}
-                <div className="absolute w-32 h-64 border-4 border-gray-200 rounded-[2.5rem] z-10 flex flex-col items-center">
-                  <div className="w-12 h-4 bg-gray-200 rounded-b-xl"></div>
-                </div>
-                {/* Floating Tag */}
-                <div className="absolute left-4 top-1/2 w-12 h-12 bg-gray-100 border border-gray-300 rounded-full shadow-lg z-20 animate-float-tag"></div>
+          {/* ==========================================
+              PAIRING & CONNECTION FLOW (Video 1 & 2)
+              ========================================== */}
+          {pairingStep !== 'idle' && (
+            <div className="fixed inset-0 z-50 bg-white flex flex-col justify-end animate-fade-in">
+              <div className="w-full h-[65vh] bg-white rounded-t-[2.5rem] shadow-[0_-20px_50px_rgba(0,0,0,0.08)] flex flex-col items-center p-8 relative animate-slide-up">
+                
+                {pairingStep === 'searching' && (
+                  <div className="flex flex-col items-center w-full mt-4">
+                    <h2 className="text-[22px] font-bold text-black mb-2 tracking-tight">Searching for AirTag...</h2>
+                    <p className="text-[15px] text-gray-500 text-center mb-16 max-w-xs">Pull tab on AirTag and bring it near this iPhone to start.</p>
+                    
+                    <div className="relative w-64 h-64 flex items-center justify-center">
+                      {/* Phone silhouette */}
+                      <div className="absolute w-28 h-[13.5rem] border-[4px] border-gray-300 rounded-[2.5rem] z-10 flex flex-col items-center">
+                        <div className="w-10 h-[5px] bg-gray-300 rounded-b-xl"></div>
+                      </div>
+                      {/* Floating Tag */}
+                      <div className="absolute left-6 top-1/2 w-12 h-12 bg-gray-100 border border-gray-200 rounded-full shadow-lg z-20 animate-float-tag"></div>
+                    </div>
+                  </div>
+                )}
+
+                {pairingStep === 'connecting' && (
+                  <div className="flex flex-col items-center justify-center w-full h-full mt-[-2rem]">
+                    <div className="ios-spinner mb-6"></div>
+                    <h2 className="text-[22px] font-bold text-black tracking-tight">setting things up</h2>
+                  </div>
+                )}
+
+                {pairingStep === 'done' && (
+                  <div className="flex flex-col items-start w-full h-full justify-end pb-4">
+                    <div className="flex-1 flex flex-col justify-center w-full">
+                      <h2 className="text-3xl font-bold text-black mb-2 tracking-tight">all done!</h2>
+                      <p className="text-[15px] text-gray-500">tap start tracking on the main screen to start your first tracking session</p>
+                    </div>
+                    <button 
+                      onClick={finishPairing}
+                      className="w-full py-[1.1rem] bg-ios-lightGray text-black rounded-2xl font-bold text-[17px] active:scale-95 transition-transform"
+                    >
+                      okay
+                    </button>
+                  </div>
+                )}
+
               </div>
             </div>
           )}
 
-          {/* SETTINGS MODAL */}
+          {/* ==========================================
+              RENAME MODAL
+              ========================================== */}
+          {showRenameModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm animate-fade-in" onClick={() => setShowRenameModal(false)}>
+              <div className="w-full max-w-sm rounded-[24px] bg-white p-6 shadow-2xl" onClick={e => e.stopPropagation()}>
+                <h3 className="text-xl font-bold text-black text-center mb-4">Rename Item</h3>
+                <input 
+                  type="text"
+                  value={renameInput}
+                  onChange={(e) => setRenameInput(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl bg-gray-100 border-none text-black font-medium focus:outline-none focus:ring-2 focus:ring-ios-green mb-5"
+                  placeholder="e.g. Wallet, Keys"
+                  autoFocus
+                />
+                <div className="flex gap-3">
+                  <button onClick={() => setShowRenameModal(false)} className="flex-1 py-3 rounded-xl bg-gray-100 text-black font-semibold">Cancel</button>
+                  <button onClick={saveRename} className="flex-1 py-3 rounded-xl bg-black text-white font-semibold">Save</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ==========================================
+              SETTINGS MODAL
+              ========================================== */}
           {showSettingsModal && (
             <div onClick={() => setShowSettingsModal(false)} className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:p-6 bg-black/40 backdrop-blur-sm animate-fade-in">
-              <div onClick={(e) => e.stopPropagation()} className="w-full sm:max-w-md rounded-t-[36px] sm:rounded-[36px] bg-[#f2f2f7] p-6 shadow-2xl space-y-6 max-h-[85vh] overflow-y-auto">
+              <div onClick={(e) => e.stopPropagation()} className="w-full sm:max-w-md rounded-t-[36px] sm:rounded-[36px] bg-ios-lightGray p-6 shadow-2xl space-y-6 max-h-[85vh] overflow-y-auto">
                 <div className="flex items-center justify-between pb-2">
-                  <h2 className="text-2xl font-bold text-black">Settings</h2>
-                  <button onClick={() => setShowSettingsModal(false)} className="w-8 h-8 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center font-bold">
+                  <h2 className="text-2xl font-bold text-black tracking-tight">Settings</h2>
+                  <button onClick={() => setShowSettingsModal(false)} className="w-8 h-8 rounded-full bg-gray-200/80 text-gray-600 flex items-center justify-center font-bold active:bg-gray-300">
                     <Icon name="x" size={18} />
                   </button>
                 </div>
                 
-                <div className="bg-white rounded-2xl overflow-hidden divide-y divide-gray-100 shadow-sm">
-                  <div className="p-4 flex justify-between items-center">
-                    <span className="text-base text-black">Version</span>
-                    <span className="text-base text-gray-500">{APP_SETTINGS.version}</span>
-                  </div>
-                  <div className="p-4 flex justify-between items-center">
-                    <span className="text-base text-black">Developer</span>
-                    <span className="text-base text-gray-500">{APP_SETTINGS.developer}</span>
+                {/* About Section */}
+                <div className="space-y-1.5">
+                  <div className="text-[12px] font-semibold text-gray-500 uppercase tracking-wider px-4">About</div>
+                  <div className="apple-settings-card divide-y divide-gray-100">
+                    <div className="p-4">
+                      <h3 className="text-[17px] font-semibold text-black mb-1">{APP_SETTINGS.aboutTitle}</h3>
+                      <p className="text-[15px] text-gray-500 leading-snug">{APP_SETTINGS.aboutDescription}</p>
+                    </div>
                   </div>
                 </div>
+
+                {/* Support Section */}
+                <div className="space-y-1.5">
+                  <div className="text-[12px] font-semibold text-gray-500 uppercase tracking-wider px-4">Support</div>
+                  <div className="apple-settings-card divide-y divide-gray-100">
+                    <div className="p-4 flex justify-between items-center">
+                      <span className="text-[17px] text-black">Customer Support</span>
+                      <span className="text-[17px] text-gray-500">24/7 Available</span>
+                    </div>
+                    <div className="p-4 flex justify-between items-center">
+                      <span className="text-[17px] text-black">Support Mail</span>
+                      <span className="text-[17px] text-blue-500">{APP_SETTINGS.contactEmail}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* App Info Section */}
+                <div className="space-y-1.5">
+                  <div className="text-[12px] font-semibold text-gray-500 uppercase tracking-wider px-4">App Info</div>
+                  <div className="apple-settings-card divide-y divide-gray-100">
+                    <div className="p-4 flex justify-between items-center">
+                      <span className="text-[17px] text-black">Version</span>
+                      <span className="text-[17px] text-gray-500">{APP_SETTINGS.version}</span>
+                    </div>
+                    <div className="p-4 flex justify-between items-center">
+                      <span className="text-[17px] text-black">Developer</span>
+                      <span className="text-[17px] text-gray-500">{APP_SETTINGS.developer}</span>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
           )}
