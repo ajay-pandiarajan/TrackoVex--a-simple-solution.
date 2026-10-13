@@ -273,8 +273,19 @@
       return (
         <div className="absolute inset-0 z-50 bg-white dark:bg-ios-darkGray flex flex-col justify-between px-8 py-14 transition-opacity duration-500 select-none">
           <div className="flex-1 flex flex-col items-center justify-center">
-            <div className="w-24 h-24 rounded-3xl bg-black dark:bg-white flex items-center justify-center mb-8 shadow-2xl">
-              <Icon name="navigation" size={42} className="text-white dark:text-black" />
+            <div className="w-32 h-32 mb-8 flex items-center justify-center relative">
+              <img 
+                src="logo_t.jpeg" 
+                alt="TrackoVex Logo" 
+                className="w-full h-full object-contain rounded-3xl shadow-xl"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.nextElementSibling.style.display = 'flex';
+                }} 
+              />
+              <div className="hidden w-24 h-24 rounded-3xl bg-black dark:bg-white items-center justify-center shadow-2xl">
+                <Icon name="navigation" size={42} className="text-white dark:text-black" />
+              </div>
             </div>
             <div className="text-center px-4 max-w-xs">
               <h1 className="text-3xl font-bold text-black dark:text-white tracking-tight leading-snug">
