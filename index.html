@@ -269,10 +269,10 @@
             <img src="logo_black.png" alt="TrackoVex" className="w-32 h-auto object-contain mb-8 opacity-80" onError={(e) => e.target.style.display='none'} />
             <div className="text-center px-4 max-w-xs">
               <h1 className="text-3xl font-bold text-black tracking-tight leading-snug">
-                TrackoVex
+                TrackoVex- a simple solution
               </h1>
               <p className="text-sm text-gray-500 mt-2">
-                Precision Finding
+                Precise, Specify, Locate.
               </p>
             </div>
           </div>
@@ -430,7 +430,7 @@
                 <div className="w-24 h-24 rounded-full ios-liquid-glass flex items-center justify-center mb-6">
                   <Icon name="bluetooth" size={32} className="text-black/40" />
                 </div>
-                <h2 className="text-xl font-bold text-black">No Item Selected</h2>
+                <h2 className="text-xl font-bold text-black">No TrackoVex is Found</h2>
                 <p className="text-sm text-gray-500 mt-2">Tap the add button to pair a TrackoVex.</p>
               </div>
             )}
@@ -513,8 +513,8 @@
                 
                 {pairingStep === 'searching' && (
                   <div className="flex flex-col items-center w-full mt-4">
-                    <h2 className="text-[22px] font-bold text-black mb-2 tracking-tight">Searching for AirTag...</h2>
-                    <p className="text-[15px] text-gray-500 text-center mb-16 max-w-xs">Pull tab on AirTag and bring it near this iPhone to start.</p>
+                    <h2 className="text-[22px] font-bold text-black mb-2 tracking-tight">SEARCHING FOR YOUR TrackoVex...</h2>
+                    <p className="text-[15px] text-gray-500 text-center mb-16 max-w-xs">POWER ON YOUR TrackoVex AND BRING IT NEAR THIS TO PAIR.</p>
                     
                     <div className="relative w-64 h-64 flex items-center justify-center">
                       {/* Phone silhouette */}
@@ -530,21 +530,21 @@
                 {pairingStep === 'connecting' && (
                   <div className="flex flex-col items-center justify-center w-full h-full mt-[-2rem]">
                     <div className="ios-spinner mb-6"></div>
-                    <h2 className="text-[22px] font-bold text-black tracking-tight">setting things up</h2>
+                    <h2 className="text-[22px] font-bold text-black tracking-tight">SETTING THINGS DONE !</h2>
                   </div>
                 )}
 
                 {pairingStep === 'done' && (
                   <div className="flex flex-col items-start w-full h-full justify-end pb-4">
                     <div className="flex-1 flex flex-col justify-center w-full">
-                      <h2 className="text-3xl font-bold text-black mb-2 tracking-tight">all done!</h2>
-                      <p className="text-[15px] text-gray-500">tap start tracking on the main screen to start your first tracking session</p>
+                      <h2 className="text-3xl font-bold text-black mb-2 tracking-tight">ALL DONE!</h2>
+                      <p className="text-[15px] text-gray-500">TAP START TRACKING TO START YOUR TRACKING SESSION !</p>
                     </div>
                     <button 
                       onClick={finishPairing}
                       className="w-full py-[1.1rem] bg-ios-lightGray text-black rounded-2xl font-bold text-[17px] active:scale-95 transition-transform"
                     >
-                      okay
+                      OKAY
                     </button>
                   </div>
                 )}
@@ -610,7 +610,7 @@
                     </div>
                     <div className="p-4 flex justify-between items-center">
                       <span className="text-[17px] text-black">Support Mail</span>
-                      <span className="text-[17px] text-blue-500">{APP_SETTINGS.contactEmail}</span>
+                      <span className="text-[17px] text-blue-500">{trackovexapp@gmail.com}</span>
                     </div>
                   </div>
                 </div>
