@@ -87,7 +87,6 @@
   </script>
 
   <style>
-    /* Global White Theme */
     html, body {
       width: 100%;
       height: 100%;
@@ -112,7 +111,6 @@
       position: relative;
     }
 
-    /* HIGH-GLOSS LIQUID GLASS STYLING */
     .ios-liquid-glass {
       background: rgba(255, 255, 255, 0.6);
       backdrop-filter: blur(40px) saturate(180%);
@@ -143,7 +141,6 @@
       overflow: hidden;
     }
 
-    /* Morphing Continue Button */
     .btn-morph-container {
       position: relative;
       height: 56px;
@@ -202,7 +199,6 @@
       animation: checkDraw 0.4s 0.2s ease-out forwards;
     }
 
-    /* iOS Loading Spinner */
     .ios-spinner {
       border: 3px solid rgba(0, 0, 0, 0.1);
       border-top: 3px solid #000000;
@@ -245,9 +241,6 @@
       return <span ref={iconRef} className={`inline-flex items-center justify-center align-middle ${className}`} style={{ width: size, height: size }}></span>;
     };
 
-    // ==========================================
-    // INTRO SPLASH
-    // ==========================================
     function IntroSplash({ onContinue }) {
       const [btnState, setBtnState] = useState('idle');
 
@@ -291,9 +284,6 @@
       );
     }
 
-    // ==========================================
-    // DIRECTION ARROW VIEW
-    // ==========================================
     function DirectionArrowView({ angle = 45 }) {
       return (
         <div className="relative flex flex-col items-center justify-center my-6">
@@ -318,9 +308,6 @@
       );
     }
 
-    // ==========================================
-    // MAIN APP COMPONENT
-    // ==========================================
     function TrackoVexApp() {
       const [showIntro, setShowIntro] = useState(true);
       const [devices, setDevices] = useState([]);
@@ -332,16 +319,15 @@
 
       const [isBuzzerSounding, setIsBuzzerSounding] = useState(false);
       
-      // Pairing Flow States
-      const [pairingStep, setPairingStep] = useState('idle'); // idle, searching, connecting, done
+      const [pairingStep, setPairingStep] = useState('idle');
       
-      // Modal States
       const [showSettingsModal, setShowSettingsModal] = useState(false);
+      const [showDevicesModal, setShowDevicesModal] = useState(false);
       const [showRenameModal, setShowRenameModal] = useState(false);
       const [renameInput, setRenameInput] = useState("");
 
       const currentDevice = useMemo(() => {
-        return devices.find(d => d.id === activeDeviceId) || devices[0] || null;
+        return devices.find(d => d.id === activeDeviceId) || null;
       }, [devices, activeDeviceId]);
 
       const handleTriggerBottomBuzzer = () => {
@@ -350,7 +336,6 @@
         setTimeout(() => setIsBuzzerSounding(false), 2200);
       };
 
-      // Simulated Tracking Updates
       useEffect(() => {
         if (!currentDevice) return;
         const interval = setInterval(() => {
@@ -363,7 +348,6 @@
         return () => clearInterval(interval);
       }, [currentDevice]);
 
-      // Video-referenced Pairing Flow
       const startPairingFlow = () => {
         setPairingStep('searching');
         setTimeout(() => {
@@ -377,7 +361,7 @@
       const finishPairing = () => {
         const newDevice = {
           id: `ESP32-${Date.now()}`,
-          name: "TrackoVex Tag",
+          name: `TrackoVex Tag ${devices.length + 1}`,
           battery: 100,
         };
         setDevices(prev => [...prev, newDevice]);
@@ -386,7 +370,6 @@
         setDistanceVal(6);
       };
 
-      // Rename Logic
       const openRename = () => {
         if (!currentDevice) return;
         setRenameInput(currentDevice.name);
@@ -397,6 +380,14 @@
         if (!renameInput.trim() || !currentDevice) return;
         setDevices(prev => prev.map(d => d.id === currentDevice.id ? { ...d, name: renameInput.trim() } : d));
         setShowRenameModal(false);
+      };
+
+      const removeDevice = (id) => {
+        setDevices(prev => prev.filter(d => d.id !== id));
+        if (activeDeviceId === id) {
+          const remaining = devices.filter(d => d.id !== id);
+          setActiveDeviceId(remaining.length > 0 ? remaining[0].id : null);
+        }
       };
 
       const isFinding = !!currentDevice;
@@ -418,7 +409,7 @@
                 {currentDevice ? "FINDING" : "TRACKOVEX"}
               </div>
               <h1 className={`text-3xl font-bold tracking-tight ${textColor} mt-1`}>
-                {currentDevice ? currentDevice.name : "No Device"}
+                {currentDevice ? currentDevice.name : "No Device Selected"}
               </h1>
             </div>
           </div>
@@ -430,8 +421,8 @@
                 <div className="w-24 h-24 rounded-full ios-liquid-glass flex items-center justify-center mb-6">
                   <Icon name="bluetooth" size={32} className="text-black/40" />
                 </div>
-                <h2 className="text-xl font-bold text-black">No TrackoVex is Found</h2>
-                <p className="text-sm text-gray-500 mt-2">Tap the add button to pair a TrackoVex.</p>
+                <h2 className="text-xl font-bold text-black">No TrackoVex Active</h2>
+                <p className="text-sm text-gray-500 mt-2">Pair a device or select one from the Devices menu.</p>
               </div>
             )}
 
@@ -459,10 +450,7 @@
 
               <div className="flex items-center justify-between">
                 <button 
-                  onClick={() => {
-                    setDevices(devices.filter(d => d.id !== currentDevice.id));
-                    setActiveDeviceId(null);
-                  }}
+                  onClick={() => removeDevice(currentDevice.id)}
                   className={`w-14 h-14 rounded-full flex items-center justify-center backdrop-blur-xl border ${isFinding ? 'bg-white/20 border-white/30 text-white' : 'bg-gray-100 border-gray-200 text-black'}`}
                 >
                   <Icon name="x" size={24} />
@@ -484,11 +472,21 @@
 
           {/* FLOATING LIQUID GLASS DOCK */}
           <div className="fixed bottom-8 inset-x-0 z-40 flex justify-center px-4 pointer-events-none">
-            <div className="pointer-events-auto px-8 py-4 rounded-[2rem] liquid-dock flex items-center gap-10 shadow-xl animate-dock-bounce">
+            <div className="pointer-events-auto px-6 py-4 rounded-[2rem] liquid-dock flex items-center gap-6 sm:gap-8 shadow-xl animate-dock-bounce">
               
               <button onClick={() => startPairingFlow()} className="flex flex-col items-center gap-1.5 group">
-                <Icon name="plus" size={24} className="text-black/70 group-hover:text-black transition-colors" />
+                <Icon name="plus" size={22} className="text-black/70 group-hover:text-black transition-colors" />
                 <span className="text-[10px] font-semibold text-black/60 group-hover:text-black">Add</span>
+              </button>
+
+              <button onClick={() => setShowDevicesModal(true)} className="flex flex-col items-center gap-1.5 group relative">
+                <Icon name="cpu" size={22} className="text-black/70 group-hover:text-black transition-colors" />
+                <span className="text-[10px] font-semibold text-black/60 group-hover:text-black">Devices</span>
+                {devices.length > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-black text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
+                    {devices.length}
+                  </span>
+                )}
               </button>
 
               <button onClick={openRename} className={`flex flex-col items-center gap-1.5 group ${!currentDevice && 'opacity-40 pointer-events-none'}`}>
@@ -497,16 +495,80 @@
               </button>
 
               <button onClick={() => setShowSettingsModal(true)} className="flex flex-col items-center gap-1.5 group">
-                <Icon name="settings" size={24} className="text-black/70 group-hover:text-black transition-colors" />
+                <Icon name="settings" size={22} className="text-black/70 group-hover:text-black transition-colors" />
                 <span className="text-[10px] font-semibold text-black/60 group-hover:text-black">Settings</span>
               </button>
 
             </div>
           </div>
 
-          {/* ==========================================
-              PAIRING & CONNECTION FLOW (Video 1 & 2)
-              ========================================== */}
+          {/* DEVICE MANAGER MODAL */}
+          {showDevicesModal && (
+            <div onClick={() => setShowDevicesModal(false)} className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:p-6 bg-black/40 backdrop-blur-sm animate-fade-in">
+              <div onClick={(e) => e.stopPropagation()} className="w-full sm:max-w-md rounded-t-[36px] sm:rounded-[36px] bg-ios-lightGray p-6 shadow-2xl space-y-4 max-h-[80vh] overflow-y-auto">
+                <div className="flex items-center justify-between pb-2">
+                  <h2 className="text-2xl font-bold text-black tracking-tight">TrackoVex Devices</h2>
+                  <button onClick={() => setShowDevicesModal(false)} className="w-8 h-8 rounded-full bg-gray-200/80 text-gray-600 flex items-center justify-center font-bold">
+                    <Icon name="x" size={18} />
+                  </button>
+                </div>
+
+                {devices.length === 0 ? (
+                  <div className="p-8 text-center text-gray-500">
+                    No devices paired. Tap "Add" on the dock to pair a device.
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {devices.map(device => {
+                      const isActive = device.id === activeDeviceId;
+                      return (
+                        <div 
+                          key={device.id} 
+                          onClick={() => {
+                            setActiveDeviceId(device.id);
+                            setShowDevicesModal(false);
+                          }}
+                          className={`p-4 rounded-2xl flex items-center justify-between cursor-pointer border transition-all ${
+                            isActive ? 'bg-white border-ios-green shadow-sm' : 'bg-white/80 border-gray-200'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className={`w-3 h-3 rounded-full ${isActive ? 'bg-ios-green' : 'bg-gray-300'}`}></div>
+                            <div>
+                              <div className="text-[16px] font-bold text-black">{device.name}</div>
+                              <div className="text-[12px] text-gray-400">{device.id}</div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                window.triggerESP32BuzzerAlarm();
+                              }}
+                              className="p-2 rounded-xl bg-gray-100 text-black hover:bg-gray-200"
+                            >
+                              <Icon name="volume-2" size={18} />
+                            </button>
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                removeDevice(device.id);
+                              }}
+                              className="p-2 rounded-xl bg-red-50 text-red-600 hover:bg-red-100"
+                            >
+                              <Icon name="trash-2" size={18} />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* PAIRING & CONNECTION FLOW */}
           {pairingStep !== 'idle' && (
             <div className="fixed inset-0 z-50 bg-white flex flex-col justify-end animate-fade-in">
               <div className="w-full h-[65vh] bg-white rounded-t-[2.5rem] shadow-[0_-20px_50px_rgba(0,0,0,0.08)] flex flex-col items-center p-8 relative animate-slide-up">
@@ -517,11 +579,9 @@
                     <p className="text-[15px] text-gray-500 text-center mb-16 max-w-xs">POWER ON YOUR TrackoVex AND BRING IT NEAR THIS TO PAIR.</p>
                     
                     <div className="relative w-64 h-64 flex items-center justify-center">
-                      {/* Phone silhouette */}
                       <div className="absolute w-28 h-[13.5rem] border-[4px] border-gray-300 rounded-[2.5rem] z-10 flex flex-col items-center">
                         <div className="w-10 h-[5px] bg-gray-300 rounded-b-xl"></div>
                       </div>
-                      {/* Floating Tag */}
                       <div className="absolute left-6 top-1/2 w-12 h-12 bg-gray-100 border border-gray-200 rounded-full shadow-lg z-20 animate-float-tag"></div>
                     </div>
                   </div>
@@ -553,93 +613,4 @@
             </div>
           )}
 
-          {/* ==========================================
-              RENAME MODAL
-              ========================================== */}
-          {showRenameModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm animate-fade-in" onClick={() => setShowRenameModal(false)}>
-              <div className="w-full max-w-sm rounded-[24px] bg-white p-6 shadow-2xl" onClick={e => e.stopPropagation()}>
-                <h3 className="text-xl font-bold text-black text-center mb-4">Rename Item</h3>
-                <input 
-                  type="text"
-                  value={renameInput}
-                  onChange={(e) => setRenameInput(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-gray-100 border-none text-black font-medium focus:outline-none focus:ring-2 focus:ring-ios-green mb-5"
-                  placeholder="e.g. Wallet, Keys"
-                  autoFocus
-                />
-                <div className="flex gap-3">
-                  <button onClick={() => setShowRenameModal(false)} className="flex-1 py-3 rounded-xl bg-gray-100 text-black font-semibold">Cancel</button>
-                  <button onClick={saveRename} className="flex-1 py-3 rounded-xl bg-black text-white font-semibold">Save</button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ==========================================
-              SETTINGS MODAL
-              ========================================== */}
-          {showSettingsModal && (
-            <div onClick={() => setShowSettingsModal(false)} className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:p-6 bg-black/40 backdrop-blur-sm animate-fade-in">
-              <div onClick={(e) => e.stopPropagation()} className="w-full sm:max-w-md rounded-t-[36px] sm:rounded-[36px] bg-ios-lightGray p-6 shadow-2xl space-y-6 max-h-[85vh] overflow-y-auto">
-                <div className="flex items-center justify-between pb-2">
-                  <h2 className="text-2xl font-bold text-black tracking-tight">Settings</h2>
-                  <button onClick={() => setShowSettingsModal(false)} className="w-8 h-8 rounded-full bg-gray-200/80 text-gray-600 flex items-center justify-center font-bold active:bg-gray-300">
-                    <Icon name="x" size={18} />
-                  </button>
-                </div>
-                
-                {/* About Section */}
-                <div className="space-y-1.5">
-                  <div className="text-[12px] font-semibold text-gray-500 uppercase tracking-wider px-4">About</div>
-                  <div className="apple-settings-card divide-y divide-gray-100">
-                    <div className="p-4">
-                      <h3 className="text-[17px] font-semibold text-black mb-1">{APP_SETTINGS.aboutTitle}</h3>
-                      <p className="text-[15px] text-gray-500 leading-snug">{APP_SETTINGS.aboutDescription}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Support Section */}
-                <div className="space-y-1.5">
-                  <div className="text-[12px] font-semibold text-gray-500 uppercase tracking-wider px-4">Support</div>
-                  <div className="apple-settings-card divide-y divide-gray-100">
-                    <div className="p-4 flex justify-between items-center">
-                      <span className="text-[17px] text-black">Customer Support</span>
-                      <span className="text-[17px] text-gray-500">24/7 Available</span>
-                    </div>
-                    <div className="p-4 flex justify-between items-center">
-                      <span className="text-[17px] text-black">Support Mail</span>
-                      <span className="text-[17px] text-blue-500">{trackovexapp@gmail.com}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* App Info Section */}
-                <div className="space-y-1.5">
-                  <div className="text-[12px] font-semibold text-gray-500 uppercase tracking-wider px-4">App Info</div>
-                  <div className="apple-settings-card divide-y divide-gray-100">
-                    <div className="p-4 flex justify-between items-center">
-                      <span className="text-[17px] text-black">Version</span>
-                      <span className="text-[17px] text-gray-500">{APP_SETTINGS.version}</span>
-                    </div>
-                    <div className="p-4 flex justify-between items-center">
-                      <span className="text-[17px] text-black">Developer</span>
-                      <span className="text-[17px] text-gray-500">{APP_SETTINGS.developer}</span>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          )}
-
-        </div>
-      );
-    }
-
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<TrackoVexApp />);
-  </script>
-</body>
-</html>
+          {/* RENAME MODAL
