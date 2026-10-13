@@ -221,13 +221,13 @@
 
     const APP_SETTINGS = {
       appName: "TrackoVex",
-      version: "v3.0 Liquid",
+      version: "v.1.0.4",
       buildNumber: "2026.10.12",
-      aboutTitle: "TrackoVex Precision Beacon",
-      aboutDescription: "TrackoVex provides real-time Ultra-Wideband & BLE device location tracking with hardware ESP32 buzzer triggers. Developed to ensure you never lose track of your most valuable items.",
-      developer: "MiniProject III Team",
-      contactEmail: "support@trackovex.io",
-      hardwareVersion: "ESP32-S3 Ultra-wideband 5.0"
+      aboutTitle: "TrackoVex- a simple solution",
+      aboutDescription: "TrackoVex provides real-time BLE device location tracking with hardware ESP32 buzzer triggers. Developed to ensure you never lose track of your most valuable items.",
+      developer: "The TrackoVex Company",
+      contactEmail: "trackovex@gmail.com",
+      hardwareVersion: "EDPDn432.5nd"
     };
 
     const Icon = ({ name, size = 20, className = "" }) => {
@@ -424,7 +424,7 @@
                   <Icon name="bluetooth" size={32} className="text-black/40" />
                 </div>
                 <h2 className="text-xl font-bold text-black">No TrackoVex Active</h2>
-                <p className="text-sm text-gray-500 mt-2">Pair a device or select one from the Devices menu.</p>
+                <p className="text-sm text-gray-500 mt-2">Pair a TrackoVex or select one from the Devices menu.</p>
               </div>
             )}
 
@@ -517,7 +517,7 @@
 
                 {devices.length === 0 ? (
                   <div className="p-8 text-center text-gray-500">
-                    No devices paired. Tap "Add" on the dock to pair a device.
+                    No devices paired. Tap "Add" on the dock to pair a TrackoVex.
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -577,8 +577,8 @@
                 
                 {pairingStep === 'searching' && (
                   <div className="flex flex-col items-center w-full mt-4">
-                    <h2 className="text-[22px] font-bold text-black mb-2 tracking-tight">SEARCHING FOR YOUR TrackoVex...</h2>
-                    <p className="text-[15px] text-gray-500 text-center mb-16 max-w-xs">POWER ON YOUR TrackoVex AND BRING IT NEAR THIS TO PAIR.</p>
+                    <h2 className="text-[22px] font-bold text-black mb-2 tracking-tight">searching your TrackoVex...</h2>
+                    <p className="text-[15px] text-gray-500 text-center mb-16 max-w-xs">Power ON your TrackoVex .</p>
                     
                     <div className="relative w-64 h-64 flex items-center justify-center">
                       <div className="absolute w-28 h-[13.5rem] border-[4px] border-gray-300 rounded-[2.5rem] z-10 flex flex-col items-center">
@@ -592,15 +592,15 @@
                 {pairingStep === 'connecting' && (
                   <div className="flex flex-col items-center justify-center w-full h-full mt-[-2rem]">
                     <div className="ios-spinner mb-6"></div>
-                    <h2 className="text-[22px] font-bold text-black tracking-tight">SETTING THINGS DONE !</h2>
+                    <h2 className="text-[22px] font-bold text-black tracking-tight">setting things done!</h2>
                   </div>
                 )}
 
                 {pairingStep === 'done' && (
                   <div className="flex flex-col items-start w-full h-full justify-end pb-4">
                     <div className="flex-1 flex flex-col justify-center w-full">
-                      <h2 className="text-3xl font-bold text-black mb-2 tracking-tight">ALL DONE!</h2>
-                      <p className="text-[15px] text-gray-500">TAP START TRACKING TO START YOUR TRACKING SESSION !</p>
+                      <h2 className="text-3xl font-bold text-black mb-2 tracking-tight">all done!</h2>
+                      <p className="text-[15px] text-gray-500">Tap Start Tracking to start your Tracking Session !</p>
                     </div>
                     <button 
                       onClick={finishPairing}
